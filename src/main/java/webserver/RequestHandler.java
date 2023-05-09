@@ -1,10 +1,17 @@
 package webserver;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +26,12 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        try (BufferedReader reader = getBufferedReader(); DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream())) {
+        try (BufferedReader reader = getBufferedReader();
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
+
             final WebRequest request = WebRequest.from(reader);
 
-            if (FileExtension.hasExtension(request.getPath())) {
-                //TODO 정적 Resource
-            }
-
-            byte[] body = "Hello World".getBytes();
-            response200Header(out, body.length);
-            responseBody(out, body);
+            FileExtension.from(request.getPath()).ifPresent(extension -> writeStaticResource(writer, request.getPath()));
 
             clientSocket.close();
         } catch (IOException e) {
@@ -38,18 +41,31 @@ public class RequestHandler implements Runnable {
         LOGGER.info("------------- run exit ------------------");
     }
 
+    private void writeStaticResource(BufferedWriter writer, String requestPath) {
+        //TODO
+        // html, css, ico 등에 따라 처리 필요
+        try {
+            final String body = Files.readString(Path.of(Objects.requireNonNull(getClass().getResource("/static" + requestPath)).toURI()));
+            response200Header(writer, body.length());
+            writer.write(body);
+            writer.flush();
+        } catch (IOException | URISyntaxException ex) {
+            LOGGER.error(ex.getMessage());
+        }
+    }
+
     private BufferedReader getBufferedReader() throws IOException {
         return new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(BufferedWriter writer, int contentsLength) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
+            writer.write("HTTP/1.1 200 OK \r\n");
+            writer.write("Content-Type: text/html;charset=utf-8\r\n");
+            writer.write("Content-Length: " + contentsLength + "\r\n");
+            writer.write("\r\n");
         } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
         }
     }
 

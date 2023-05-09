@@ -1,6 +1,7 @@
 package webserver;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum FileExtension {
     HTML(".html"),
@@ -16,8 +17,9 @@ public enum FileExtension {
         this.extension = extension;
     }
 
-    public static boolean hasExtension(String path) {
+    public static Optional<FileExtension> from(String path) {
         return Arrays.stream(values())
-                .anyMatch(fileExtension -> path.endsWith(fileExtension.extension));
+                .filter(fileExtension -> path.endsWith(fileExtension.extension))
+                .findFirst();
     }
 }
