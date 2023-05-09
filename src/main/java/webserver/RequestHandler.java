@@ -3,11 +3,9 @@ package webserver;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,28 +13,32 @@ import org.slf4j.LoggerFactory;
 public class RequestHandler implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
 
-    private final Socket socket;
+    private final Socket clientSocket;
 
-    public RequestHandler(Socket socket) {
-        this.socket = socket;
+    public RequestHandler(Socket clientSocket) {
+        this.clientSocket = clientSocket;
     }
 
     public void run() {
-        LOGGER.debug("New Client Connect! Connected IP : {}, Port : {}", socket.getInetAddress(),
-                socket.getPort());
+        try (BufferedReader reader = getBufferedReader(); OutputStream out = clientSocket.getOutputStream()) {
 
-        try (var br = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-             OutputStream out = socket.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            final WebRequest request = WebRequest.from(br);
+            final WebRequest request = WebRequest.from(reader);
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "Hello World".getBytes();
             response200Header(dos, body.length);
             responseBody(dos, body);
+
+            clientSocket.close();
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
+
+        LOGGER.info("------------- run exit ------------------");
+    }
+
+    private BufferedReader getBufferedReader() throws IOException {
+        return new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {

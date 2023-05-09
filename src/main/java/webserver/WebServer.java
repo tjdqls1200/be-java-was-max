@@ -1,8 +1,11 @@
 package webserver;
 
+import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.concurrent.ExecutorService;
+import java.net.Socket;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,18 +15,17 @@ public class WebServer {
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String[] args) throws Exception {
-        final ExecutorService executorService = Executors.newFixedThreadPool(10);
+        final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
         final int port = getPort(args);
+        final ServerSocket serverSocket = new ServerSocket(port);
 
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            LOGGER.info("Web Application Server started {} port.", port);
+        while (isConnected(serverSocket)) {
+            executorService.execute(new RequestHandler(serverSocket.accept()));
 
-            while (isConnected(serverSocket)) {
-                executorService.execute(new RequestHandler(serverSocket.accept()));
-            }
+            LOGGER.info("Active Thread: " + executorService.getActiveCount());
         }
-
         executorService.shutdown();
+        serverSocket.close();
     }
 
     private static int getPort(String[] args) {

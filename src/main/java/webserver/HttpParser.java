@@ -3,6 +3,7 @@ package webserver;
 public final class HttpParser {
     private static final String SPACE_BAR = " ";
     private static final String CRLF = "";
+    private static final String COLON = ":";
 
     public static void parse(WebRequest request, String line, final int lineNumber) {
         if (isStartLine(lineNumber)) {
@@ -15,7 +16,10 @@ public final class HttpParser {
     }
 
     private static void parseHeader(WebRequest request, String line) {
-        //TODO 헤더 파싱 구현
+        String key = line.split(COLON)[0];
+        String value = line.replaceFirst(key + COLON, "").trim();
+
+        request.setHeader(key, value);
     }
 
     private static boolean isHeaderLine(String line, int lineNumber) {

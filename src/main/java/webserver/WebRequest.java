@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,14 +19,23 @@ public class WebRequest {
 
     private final Map<String, String> headers = new HashMap<>();
 
-    /*
-    * GET /index.html HTTP/1.1
-    * Host: localhost:8080
-    * Connection: keep-alive
-    * Accept:
-    * */
-
     protected WebRequest() {
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
     protected void setMethod(String method) {
@@ -51,7 +59,7 @@ public class WebRequest {
         int lineNumber = 0;
         String line;
 
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null && !line.isBlank()) {
             LOGGER.info(line);
             HttpParser.parse(request, line, lineNumber++);
         }
