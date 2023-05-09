@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import org.slf4j.Logger;
@@ -20,14 +19,12 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        try (BufferedReader reader = getBufferedReader(); OutputStream out = clientSocket.getOutputStream()) {
-
+        try (BufferedReader reader = getBufferedReader(); DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream())) {
             final WebRequest request = WebRequest.from(reader);
 
-            DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            response200Header(out, body.length);
+            responseBody(out, body);
 
             clientSocket.close();
         } catch (IOException e) {

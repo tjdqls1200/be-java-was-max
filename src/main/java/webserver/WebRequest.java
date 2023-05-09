@@ -19,6 +19,8 @@ public class WebRequest {
 
     private final Map<String, String> headers = new HashMap<>();
 
+    private final Map<String, String> requestParams = new HashMap<>();
+
     protected WebRequest() {
     }
 
@@ -38,12 +40,20 @@ public class WebRequest {
         return headers;
     }
 
+    public Map<String, String> getRequestParams() {
+        return requestParams;
+    }
+
     protected void setMethod(String method) {
         this.method = method;
     }
 
     protected void setUrl(String url) {
         this.url = url;
+    }
+
+    protected void setRequestParam(String key, String value) {
+        requestParams.put(key, value);
     }
 
     protected void setVersion(String version) {

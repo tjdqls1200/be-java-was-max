@@ -2,39 +2,53 @@ package webserver;
 
 public final class HttpParser {
     private static final String SPACE_BAR = " ";
-    private static final String CRLF = "";
+    private static final String BLANK = "";
     private static final String COLON = ":";
+    private static final String REQUEST_URL_SEPARATOR = "\\?";
+    private static final String QUERY_PARAM_SEPARATOR = "&";
+    private static final String ENTRY_SEPARATOR = "=";
 
     public static void parse(WebRequest request, String line, final int lineNumber) {
         if (isStartLine(lineNumber)) {
             parseStartLine(request, line);
         }
-        if (isHeaderLine(line, lineNumber)) {
-            parseHeader(request, line);
-        }
 
-    }
-
-    private static void parseHeader(WebRequest request, String line) {
-        String key = line.split(COLON)[0];
-        String value = line.replaceFirst(key + COLON, "").trim();
-
-        request.setHeader(key, value);
-    }
-
-    private static boolean isHeaderLine(String line, int lineNumber) {
-        return lineNumber > 1 && !line.equals(CRLF);
+        parseHeader(request, line);
     }
 
     private static boolean isStartLine(int lineNumber) {
         return lineNumber == 0;
     }
 
+    private static void parseHeader(WebRequest request, String line) {
+        String key = line.split(COLON)[0];
+        String value = line.replaceFirst(key + COLON, BLANK).trim();
+
+        request.setHeader(key, value);
+    }
+
     private static void parseStartLine(WebRequest request, String line) {
         final String[] elements = line.split(SPACE_BAR);
 
         request.setMethod(elements[0]);
-        request.setUrl(elements[1]);
+        parseRequestURL(request, elements[1]);
         request.setVersion(elements[2]);
+    }
+
+    private static void parseRequestURL(WebRequest request, String url) {
+        final String[] params = url.split(REQUEST_URL_SEPARATOR);
+
+        request.setUrl(params[0]);
+
+        if (hasQueryParams(params)) {
+            for (String queryParam : params[1].split(QUERY_PARAM_SEPARATOR)) {
+                String[] queryParamEntry = queryParam.split(ENTRY_SEPARATOR);
+                request.setRequestParam(queryParamEntry[0], queryParamEntry[1]);
+            }
+        }
+    }
+
+    private static boolean hasQueryParams(String[] params) {
+        return params.length > 1;
     }
 }
