@@ -22,6 +22,10 @@ public class RequestHandler implements Runnable {
         try (BufferedReader reader = getBufferedReader(); DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream())) {
             final WebRequest request = WebRequest.from(reader);
 
+            if (FileExtension.hasExtension(request.getPath())) {
+                //TODO 정적 Resource
+            }
+
             byte[] body = "Hello World".getBytes();
             response200Header(out, body.length);
             responseBody(out, body);

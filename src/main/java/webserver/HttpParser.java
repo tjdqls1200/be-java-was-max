@@ -37,8 +37,8 @@ public final class HttpParser {
 
     private static void parseRequestURL(WebRequest request, String url) {
         final String[] params = url.split(REQUEST_URL_SEPARATOR);
-
-        request.setUrl(params[0]);
+        request.setUrl(url);
+        request.setPath(params[0]);
 
         if (hasQueryParams(params)) {
             for (String queryParam : params[1].split(QUERY_PARAM_SEPARATOR)) {

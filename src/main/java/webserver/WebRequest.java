@@ -15,6 +15,8 @@ public class WebRequest {
 
     private String url;
 
+    private String path;
+
     private String version;
 
     private final Map<String, String> headers = new HashMap<>();
@@ -30,6 +32,10 @@ public class WebRequest {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public String getVersion() {
@@ -58,6 +64,10 @@ public class WebRequest {
 
     protected void setVersion(String version) {
         this.version = version;
+    }
+
+    protected void setPath(String path) {
+        this.path = path;
     }
 
     protected void setHeader(String key, String value) {
