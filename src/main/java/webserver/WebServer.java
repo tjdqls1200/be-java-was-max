@@ -20,9 +20,8 @@ public class WebServer {
         final ServerSocket serverSocket = new ServerSocket(port);
 
         while (isConnected(serverSocket)) {
-            executorService.execute(new RequestHandler(serverSocket.accept()));
-
             LOGGER.info("Active Thread: " + executorService.getActiveCount());
+            executorService.execute(new RequestHandler(serverSocket.accept()));
         }
         executorService.shutdown();
         serverSocket.close();

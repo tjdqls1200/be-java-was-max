@@ -1,6 +1,5 @@
 package webserver;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -18,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
+    private static final String STATIC_PRIFIX = "/static";
 
     private final Socket clientSocket;
 
@@ -28,30 +28,38 @@ public class RequestHandler implements Runnable {
     public void run() {
         try (BufferedReader reader = getBufferedReader();
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
-
+            LOGGER.info("HTTP REQUEST PARSING START");
             final WebRequest request = WebRequest.from(reader);
 
-            FileExtension.from(request.getPath()).ifPresent(extension -> writeStaticResource(writer, request.getPath()));
+            LOGGER.info("HTTP REQUEST PARSING COMPLETE");
+            FileExtension.from(request.getUrl()).ifPresent(extension -> writeStaticResource(writer, request.getUrl()));
+            LOGGER.info("HTTP RESPONSE COMPLETE");
 
             clientSocket.close();
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
-
-        LOGGER.info("------------- run exit ------------------");
     }
 
     private void writeStaticResource(BufferedWriter writer, String requestPath) {
         //TODO
         // html, css, ico 등에 따라 처리 필요
         try {
-            final String body = Files.readString(Path.of(Objects.requireNonNull(getClass().getResource("/static" + requestPath)).toURI()));
+            final String body = Files.readString(toStaticPath(requestPath));
             response200Header(writer, body.length());
             writer.write(body);
             writer.flush();
         } catch (IOException | URISyntaxException ex) {
             LOGGER.error(ex.getMessage());
         }
+    }
+
+    private Path toStaticPath(String requestPath) throws URISyntaxException {
+        LOGGER.info("REQUEST PATH = " + requestPath);
+        if ("/".equals(requestPath)) {
+            requestPath = "/index.html";
+        }
+        return Path.of(Objects.requireNonNull(getClass().getResource(STATIC_PRIFIX + requestPath)).toURI());
     }
 
     private BufferedReader getBufferedReader() throws IOException {

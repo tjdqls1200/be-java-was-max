@@ -5,85 +5,89 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class WebRequest {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebRequest.class);
 
-    private String method;
+    private final RequestStartLine startLine;
 
-    private String url;
+    private final HttpHeaders header;
 
-    private String path;
+    private final String requestBody;
 
-    private String version;
-
-    private final Map<String, String> headers = new HashMap<>();
-
-    private final Map<String, String> requestParams = new HashMap<>();
-
-    protected WebRequest() {
+    protected WebRequest(RequestStartLine startLine, HttpHeaders header, String requestBody) {
+        this.startLine = startLine;
+        this.header = header;
+        this.requestBody = requestBody;
     }
 
-    public String getMethod() {
-        return method;
+    public HttpMethod getMethod() {
+        return startLine.getMethod();
     }
 
     public String getUrl() {
-        return url;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
+        return startLine.getUrl();
     }
 
     public Map<String, String> getRequestParams() {
-        return requestParams;
+        return startLine.getRequestParams();
     }
 
-    protected void setMethod(String method) {
-        this.method = method;
+    public String getVersion() {
+        return startLine.getVersion();
     }
 
-    protected void setUrl(String url) {
-        this.url = url;
+    public Map<String, List<String>> getHeaders() {
+        return header.getHeaders();
     }
 
-    protected void setRequestParam(String key, String value) {
-        requestParams.put(key, value);
-    }
-
-    protected void setVersion(String version) {
-        this.version = version;
-    }
-
-    protected void setPath(String path) {
-        this.path = path;
-    }
-
-    protected void setHeader(String key, String value) {
-        headers.put(key, value);
+    public String getRequestBody() {
+        return requestBody;
     }
 
     public static WebRequest from(BufferedReader br) throws IOException {
-        final WebRequest request = new WebRequest();
-        int lineNumber = 0;
-        String line;
+        return new WebRequest(
+                readStartLine(br.readLine()),
+                readHeaders(br),
+                readRequestBody(br)
+        );
+    }
 
-        while ((line = br.readLine()) != null && !line.isBlank()) {
-            LOGGER.info(line);
-            HttpParser.parse(request, line, lineNumber++);
+    private static RequestStartLine readStartLine(String startLine) {
+        LOGGER.info("PARSE START LINE");
+        if (startLine == null || startLine.isBlank()) {
+            throw new IllegalArgumentException("Invalid Http Requst");
         }
 
-        return request;
+        return RequestStartLine.parseStartLine(startLine);
+    }
+
+    private static HttpHeaders readHeaders(BufferedReader br) throws IOException {
+        LOGGER.info("PARSE HEADERS");
+        final List<String> headerLines = new ArrayList<>();
+        String headerLine;
+
+        while ((headerLine = br.readLine()) != null && !headerLine.isBlank()) {
+            headerLines.add(headerLine);
+        }
+
+        return HttpHeaders.parse(headerLines);
+    }
+
+    private static String readRequestBody(BufferedReader br) throws IOException {
+        LOGGER.info("PARSE REQUEST BODY");
+        StringBuilder bodyBuilder = new StringBuilder();
+        String readLine;
+
+        if (br.ready()) {
+            while ((readLine = br.readLine()) != null && !readLine.isBlank()) {
+                bodyBuilder.append(readLine);
+            }
+        }
+
+        return bodyBuilder.toString();
     }
 }
