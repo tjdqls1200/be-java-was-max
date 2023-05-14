@@ -31,6 +31,8 @@ public class RequestHandler implements Runnable {
             LOGGER.info("HTTP REQUEST PARSING START");
             final WebRequest request = WebRequest.from(reader);
 
+            LOGGER.info(request.toString());
+
             LOGGER.info("HTTP REQUEST PARSING COMPLETE");
             FileExtension.from(request.getUrl()).ifPresent(extension -> writeStaticResource(writer, request.getUrl()));
             LOGGER.info("HTTP RESPONSE COMPLETE");

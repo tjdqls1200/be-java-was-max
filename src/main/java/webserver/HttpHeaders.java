@@ -1,9 +1,9 @@
 package webserver;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class HttpHeaders {
@@ -21,7 +21,7 @@ public class HttpHeaders {
     }
 
     public static HttpHeaders parse(final List<String> headerLines) {
-        final Map<String, List<String>> headers = new ConcurrentHashMap<>();
+        final Map<String, List<String>> headers = new LinkedHashMap<>();
 
         for (String headerLine : headerLines) {
             String[] headerEntry = headerLine.split(COLON);
@@ -35,5 +35,19 @@ public class HttpHeaders {
         return Arrays.stream(headerValues.split(COMMA))
                 .map(String::trim)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("HttpHeaders { ");
+
+        for (var entry : headers.entrySet()) {
+            sb.append("\n").append('\t').append(entry.getKey()).append(": ").append(entry.getValue());
+        }
+
+        sb.append("}");
+
+        return sb.toString();
     }
 }

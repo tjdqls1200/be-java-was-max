@@ -1,10 +1,8 @@
 package webserver;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RequestStartLine {
     private static final String SP = " ";
@@ -72,5 +70,15 @@ public class RequestStartLine {
         }
 
         return requestParams;
+    }
+
+    @Override
+    public String toString() {
+        return "RequestStartLine {" + '\n' +
+                '\t' + "Method: " + method + '\n'+
+                '\t' + "Url: " + url + '\n' +
+                '\t' + "RequestParams: " + requestParams + '\n' +
+                '\t' + "Version: " + version + '\n' +
+                '}';
     }
 }

@@ -90,4 +90,13 @@ public class WebRequest {
 
         return bodyBuilder.toString();
     }
+
+    @Override
+    public String toString() {
+        return "WebRequest{" + '\n' +
+                startLine  + '\n' +
+                header + '\n' +
+                requestBody + '\n' +
+                '}';
+    }
 }
