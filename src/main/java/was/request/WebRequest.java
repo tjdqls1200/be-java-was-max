@@ -1,7 +1,9 @@
-package webserver;
+package was.request;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import was.common.HttpHeaders;
+import was.common.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;

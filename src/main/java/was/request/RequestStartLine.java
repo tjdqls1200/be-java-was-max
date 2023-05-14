@@ -1,4 +1,6 @@
-package webserver;
+package was.request;
+
+import was.common.HttpMethod;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

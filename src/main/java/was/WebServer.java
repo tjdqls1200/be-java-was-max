@@ -1,4 +1,4 @@
-package webserver;
+package was;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import was.request.RequestHandler;
 
 public class WebServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);

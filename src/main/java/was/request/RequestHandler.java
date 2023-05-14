@@ -1,4 +1,4 @@
-package webserver;
+package was.request;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
