@@ -1,12 +1,11 @@
 package webserver;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,36 +18,41 @@ public class RequestHandler implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
     private static final String STATIC_PRIFIX = "/static";
 
-    private final Socket clientSocket;
+    private final InputStream in;
+    private final OutputStream out;
 
-    public RequestHandler(Socket clientSocket) {
-        this.clientSocket = clientSocket;
+    public RequestHandler(InputStream in, OutputStream out) {
+        this.in = in;
+        this.out = out;
     }
 
     public void run() {
-        try (BufferedReader reader = getBufferedReader();
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+             DataOutputStream writer = new DataOutputStream(out)) {
+
             LOGGER.info("HTTP REQUEST PARSING START");
             final WebRequest request = WebRequest.from(reader);
 
             LOGGER.info(request.toString());
-
             LOGGER.info("HTTP REQUEST PARSING COMPLETE");
-            FileExtension.from(request.getUrl()).ifPresent(extension -> writeStaticResource(writer, request.getUrl()));
-            LOGGER.info("HTTP RESPONSE COMPLETE");
 
-            clientSocket.close();
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            final FileExtension extension = FileExtension.from(request.getUrl())
+                    .orElseThrow(() -> new IllegalArgumentException("UNSUPPORTED EXTENSION"));
+
+            writeStaticResource(writer, request.getUrl(), extension);
+
+            LOGGER.info("HTTP RESPONSE COMPLETE");
+        } catch (IOException | IllegalArgumentException ex){
+            LOGGER.error(ex.getMessage());
         }
     }
 
-    private void writeStaticResource(BufferedWriter writer, String requestPath) {
+    private void writeStaticResource(DataOutputStream writer, String requestPath, FileExtension extension) {
         //TODO
         // html, css, ico 등에 따라 처리 필요
         try {
-            final String body = Files.readString(toStaticPath(requestPath));
-            response200Header(writer, body.length());
+            final byte[] body = Files.readAllBytes(toStaticPath(requestPath));
+            response200Header(writer, extension.getMimeType(), body.length);
             writer.write(body);
             writer.flush();
         } catch (IOException | URISyntaxException ex) {
@@ -64,16 +68,12 @@ public class RequestHandler implements Runnable {
         return Path.of(Objects.requireNonNull(getClass().getResource(STATIC_PRIFIX + requestPath)).toURI());
     }
 
-    private BufferedReader getBufferedReader() throws IOException {
-        return new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    }
-
-    private void response200Header(BufferedWriter writer, int contentsLength) {
+    private void response200Header(DataOutputStream writer, String mimeType, int contentsLength) {
         try {
-            writer.write("HTTP/1.1 200 OK \r\n");
-            writer.write("Content-Type: text/html;charset=utf-8\r\n");
-            writer.write("Content-Length: " + contentsLength + "\r\n");
-            writer.write("\r\n");
+            writer.write("HTTP/1.1 200 OK \r\n".getBytes());
+            writer.write(("Content-Type: " + mimeType + "\r\n").getBytes());
+            writer.write(("Content-Length: " + contentsLength + "\r\n").getBytes());
+            writer.write("\r\n".getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
