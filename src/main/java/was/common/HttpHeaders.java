@@ -24,8 +24,10 @@ public class HttpHeaders {
         final Map<String, List<String>> headers = new LinkedHashMap<>();
 
         for (String headerLine : headerLines) {
-            String[] headerEntry = headerLine.split(COLON);
-            headers.put(HeaderType.keyOf(headerEntry[0]), parseHeaderValues(headerEntry[1]));
+            String key = headerLine.split(COLON)[0];
+            List<String> values = parseHeaderValues(headerLine.replaceFirst(key + COLON, ""));
+
+            headers.put(HeaderType.keyOf(key), values);
         }
 
         return new HttpHeaders(headers);
