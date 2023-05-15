@@ -30,7 +30,7 @@ public class RequestStartLine {
     }
 
     public Map<String, String> getRequestParams() {
-        return requestParams;
+        return new LinkedHashMap<>(requestParams);
     }
 
     public String getVersion() {
