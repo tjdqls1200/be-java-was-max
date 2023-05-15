@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class WebRequest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebRequest.class);
+public class HttpRequest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequest.class);
 
     private final RequestStartLine startLine;
 
@@ -20,7 +20,7 @@ public class WebRequest {
 
     private final String requestBody;
 
-    protected WebRequest(RequestStartLine startLine, HttpHeaders header, String requestBody) {
+    protected HttpRequest(RequestStartLine startLine, HttpHeaders header, String requestBody) {
         this.startLine = startLine;
         this.header = header;
         this.requestBody = requestBody;
@@ -50,8 +50,8 @@ public class WebRequest {
         return requestBody;
     }
 
-    public static WebRequest from(BufferedReader br) throws IOException {
-        return new WebRequest(
+    public static HttpRequest from(BufferedReader br) throws IOException {
+        return new HttpRequest(
                 RequestStartLine.parse(br.readLine()),
                 readHeaders(br),
                 readRequestBody(br)

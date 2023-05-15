@@ -3,7 +3,7 @@ package was.request;
 import java.util.Arrays;
 import java.util.Optional;
 
-public enum FileExtension {
+public enum ContentType {
     HTML(".html", "text/html;charset=utf-8"),
     CSS(".css", "text/css"),
     JS(".js", "text/javascript"),
@@ -18,7 +18,7 @@ public enum FileExtension {
 
     private final String mimeType;
 
-    FileExtension(String extension, String mimeType) {
+    ContentType(String extension, String mimeType) {
         this.extension = extension;
         this.mimeType = mimeType;
     }
@@ -27,7 +27,7 @@ public enum FileExtension {
         return mimeType;
     }
 
-    public static Optional<FileExtension> from(String path) {
+    public static Optional<ContentType> from(String path) {
         return Arrays.stream(values())
                 .filter(fileExtension -> path.endsWith(fileExtension.extension))
                 .findFirst();
