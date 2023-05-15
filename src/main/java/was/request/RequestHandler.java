@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -59,7 +61,7 @@ public class RequestHandler implements Runnable {
         //TODO
         // html, css, ico 등에 따라 처리 필요
         try {
-            final byte[] body = Files.readAllBytes(toStaticPath(requestPath));
+            final byte[] body = Files.readAllBytes(findStaticPath(requestPath));
             response200Header(contentType.getMimeType(), body.length);
             writer.write(body);
             writer.flush();
@@ -72,12 +74,16 @@ public class RequestHandler implements Runnable {
         return;
     }
 
-    private Path toStaticPath(String requestPath) throws URISyntaxException {
+    private Path findStaticPath(String requestPath) throws URISyntaxException {
         LOGGER.info("REQUEST PATH = " + requestPath);
-        if ("/".equals(requestPath)) {
-            requestPath = "/index.html";
+        final URL url = getClass().getResource(STATIC_PRIFIX + requestPath);
+
+        // 404 처리?
+        if (url == null) {
+            throw new IllegalArgumentException("해당 리소스가 없습니다.");
         }
-        return Path.of(Objects.requireNonNull(getClass().getResource(STATIC_PRIFIX + requestPath)).toURI());
+        
+        return Path.of(url.toURI());
     }
 
     private void response200Header(String mimeType, int contentsLength) {
