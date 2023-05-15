@@ -52,45 +52,46 @@ public class WebRequest {
 
     public static WebRequest from(BufferedReader br) throws IOException {
         return new WebRequest(
-                readStartLine(br.readLine()),
+                RequestStartLine.parse(br.readLine()),
                 readHeaders(br),
                 readRequestBody(br)
         );
     }
 
-    private static RequestStartLine readStartLine(String startLine) {
-        LOGGER.info("PARSE START LINE");
-        if (startLine == null || startLine.isBlank()) {
-            throw new IllegalArgumentException("Invalid Http Requst");
-        }
-
-        return RequestStartLine.parseStartLine(startLine);
-    }
-
     private static HttpHeaders readHeaders(BufferedReader br) throws IOException {
-        LOGGER.info("PARSE HEADERS");
         final List<String> headerLines = new ArrayList<>();
-        String headerLine;
+        String line = br.readLine();
 
-        while ((headerLine = br.readLine()) != null && !headerLine.isBlank()) {
-            headerLines.add(headerLine);
+        while (hasReadLine(line)) {
+            headerLines.add(line);
+            line = br.readLine();
         }
 
         return HttpHeaders.parse(headerLines);
     }
 
     private static String readRequestBody(BufferedReader br) throws IOException {
-        LOGGER.info("PARSE REQUEST BODY");
-        StringBuilder bodyBuilder = new StringBuilder();
-        String readLine;
+        if (isEmptyBuffer(br)) {
+            return "";
+        }
 
-        if (br.ready()) {
-            while ((readLine = br.readLine()) != null && !readLine.isBlank()) {
-                bodyBuilder.append(readLine);
-            }
+        final StringBuilder bodyBuilder = new StringBuilder();
+        String line = br.readLine();
+
+        while (hasReadLine(line)) {
+            bodyBuilder.append(line);
+            line = br.readLine();
         }
 
         return bodyBuilder.toString();
+    }
+
+    private static boolean isEmptyBuffer(BufferedReader br) throws IOException {
+        return !br.ready();
+    }
+
+    private static boolean hasReadLine(String line) {
+        return line != null && !line.isBlank();
     }
 
     @Override

@@ -44,20 +44,30 @@ public class RequestStartLine {
         this.version = version;
     }
 
-    public static RequestStartLine parseStartLine(String startLine) {
-        final String[] elements = startLine.split(SP);
+    public static RequestStartLine parse(String startLine) {
+        final String[] elements = toElements(startLine);
+
+        HttpMethod method = HttpMethod.from(elements[0]);
+        String[] urlElements = elements[1].split(URL_SEPARATOR);
+        String url = urlElements[0];
+        Map<String, String> requestParams = parseRequestParams(urlElements);
+        String version = elements[2];
+
+        return new RequestStartLine(method, url, requestParams, version);
+    }
+
+    private static String[] toElements(String startLine) {
+        if (startLine == null || startLine.isBlank()) {
+            throw new IllegalArgumentException("Start line is not exist");
+        }
+
+        String[] elements = startLine.split(SP);
 
         if (elements.length != ELEMENTS_COUNT) {
             throw new IllegalArgumentException("Invalid Request start Line");
         }
 
-        final HttpMethod method = HttpMethod.from(elements[0]);
-        final String[] urlElements = elements[1].split(URL_SEPARATOR);
-        final String url = urlElements[0];
-        final Map<String, String> requestParams = parseRequestParams(urlElements);
-        final String version = elements[2];
-
-        return new RequestStartLine(method, url, requestParams, version);
+        return elements;
     }
 
     private static Map<String, String> parseRequestParams(String[] urlElements) {
