@@ -1,5 +1,7 @@
 package was.request;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import was.common.HttpMethod;
 
 import java.util.Collections;
@@ -7,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class RequestStartLine {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestStartLine.class);
+
     private static final String SP = " ";
     private static final String URL_SEPARATOR = "\\?";
     private static final String QUERY_PARAMETERS_SEPARATOR = "&";

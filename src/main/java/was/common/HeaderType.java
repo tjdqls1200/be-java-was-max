@@ -24,6 +24,10 @@ public enum HeaderType {
         this.key = key;
     }
 
+    public String getKey() {
+        return key;
+    }
+
     public static String keyOf(String keyName) {
         String key = keyName.trim().toLowerCase();
 

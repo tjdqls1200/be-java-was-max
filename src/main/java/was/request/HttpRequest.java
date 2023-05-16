@@ -51,11 +51,11 @@ public class HttpRequest {
     }
 
     public static HttpRequest from(BufferedReader br) throws IOException {
-        return new HttpRequest(
-                RequestStartLine.parse(br.readLine()),
-                readHeaders(br),
-                readRequestBody(br)
-        );
+        final RequestStartLine startLine = RequestStartLine.parse(br.readLine());
+        final HttpHeaders headers = readHeaders(br);
+        final String requestBody = readRequestBody(br, headers.getContentLength());
+
+        return new HttpRequest(startLine,headers, requestBody);
     }
 
     private static HttpHeaders readHeaders(BufferedReader br) throws IOException {
@@ -70,24 +70,12 @@ public class HttpRequest {
         return HttpHeaders.parse(headerLines);
     }
 
-    private static String readRequestBody(BufferedReader br) throws IOException {
-        if (isEmptyBuffer(br)) {
-            return "";
-        }
+    private static String readRequestBody(BufferedReader br, final int contentLength) throws IOException {
+        final char[] body = new char[contentLength];
 
-        final StringBuilder bodyBuilder = new StringBuilder();
-        String line = br.readLine();
+        br.read(body);
 
-        while (hasReadLine(line)) {
-            bodyBuilder.append(line);
-            line = br.readLine();
-        }
-
-        return bodyBuilder.toString();
-    }
-
-    private static boolean isEmptyBuffer(BufferedReader br) throws IOException {
-        return !br.ready();
+        return new String(body);
     }
 
     private static boolean hasReadLine(String line) {
@@ -99,7 +87,7 @@ public class HttpRequest {
         return "WebRequest{" + '\n' +
                 startLine  + '\n' +
                 header + '\n' +
-                requestBody + '\n' +
+                "requestBody {\n\t" + requestBody + '\n' +
                 '}';
     }
 }

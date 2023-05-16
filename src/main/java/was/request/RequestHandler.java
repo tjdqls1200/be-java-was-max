@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +43,7 @@ public class RequestHandler implements Runnable {
     }
 
     private void handle(final HttpRequest request) {
-        final String requestUrl = request.getUrl();
+        final String requestUrl = request.getUrl();   // .html
 
         var contentType = ContentType.from(requestUrl);
 
@@ -82,7 +80,7 @@ public class RequestHandler implements Runnable {
         if (url == null) {
             throw new IllegalArgumentException("해당 리소스가 없습니다.");
         }
-        
+
         return Path.of(url.toURI());
     }
 
