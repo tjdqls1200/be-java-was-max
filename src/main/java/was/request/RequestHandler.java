@@ -13,6 +13,8 @@ import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import was.container.FrontServlet;
+import was.response.HttpResponse;
 
 public class RequestHandler implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
@@ -48,6 +50,7 @@ public class RequestHandler implements Runnable {
         var contentType = ContentType.from(requestUrl);
 
         if (contentType.isEmpty()) {
+
             forwardRequest(request);
             return;
         }
@@ -69,7 +72,11 @@ public class RequestHandler implements Runnable {
     }
 
     private void forwardRequest(final HttpRequest request) {
-        return;
+        final FrontServlet frontServlet = new FrontServlet();
+
+        frontServlet.init();
+
+        frontServlet.service(request, new HttpResponse());
     }
 
     private Path findStaticPath(String requestPath) throws URISyntaxException {

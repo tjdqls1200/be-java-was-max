@@ -12,7 +12,10 @@ public enum ContentType {
     ICON(".ico", "image/x-icon"),
     TRUE_TYPE_FONT(".ttf", "application/x-font-ttf"),
     WEB_OPEN_FONT(".woff", "application/x-font-woff"),
-    SCALABLE_VECTOR_GRAPHICS(".svg", "image/svg+xml");
+    SCALABLE_VECTOR_GRAPHICS(".svg", "image/svg+xml"),
+
+    //TODO json, form 데이터는 extension이 없는데 ContentType 구조 고민
+    FORM_DATA("none", "application/x-www-form-urlencoded");
 
     private final String extension;
 
