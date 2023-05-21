@@ -45,12 +45,11 @@ public class RequestHandler implements Runnable {
     }
 
     private void handle(final HttpRequest request) {
-        final String requestUrl = request.getUrl();   // .html
+        final String requestUrl = request.getUrl();
 
         var contentType = ContentType.from(requestUrl);
 
         if (contentType.isEmpty()) {
-
             forwardRequest(request);
             return;
         }

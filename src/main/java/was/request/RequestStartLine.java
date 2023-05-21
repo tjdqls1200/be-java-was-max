@@ -21,7 +21,7 @@ public class RequestStartLine {
 
     private final String url;
 
-    public final Map<String, String> requestParams;
+    public final Map<String, String> parameters;
 
     private final String version;
 
@@ -33,18 +33,22 @@ public class RequestStartLine {
         return url;
     }
 
-    public Map<String, String> getRequestParams() {
-        return new LinkedHashMap<>(requestParams);
+    public Map<String, String> getParameters() {
+        return new LinkedHashMap<>(parameters);
+    }
+
+    public String getParameter(String name) {
+        return parameters.get(name);
     }
 
     public String getVersion() {
         return version;
     }
 
-    protected RequestStartLine(HttpMethod method, String url, Map<String, String> requestParams, String version) {
+    protected RequestStartLine(HttpMethod method, String url, Map<String, String> parameters, String version) {
         this.method = method;
         this.url = url;
-        this.requestParams = requestParams;
+        this.parameters = parameters;
         this.version = version;
     }
 
@@ -54,7 +58,7 @@ public class RequestStartLine {
         HttpMethod method = HttpMethod.from(elements[0]);
         String[] urlElements = elements[1].split(URL_SEPARATOR);
         String url = urlElements[0];
-        Map<String, String> requestParams = parseRequestParams(urlElements);
+        Map<String, String> requestParams = parseParameters(urlElements);
         String version = elements[2];
 
         return new RequestStartLine(method, url, requestParams, version);
@@ -74,18 +78,18 @@ public class RequestStartLine {
         return elements;
     }
 
-    private static Map<String, String> parseRequestParams(String[] urlElements) {
-        Map<String, String> requestParams = new LinkedHashMap<>();
+    private static Map<String, String> parseParameters(String[] urlElements) {
+        Map<String, String> parameters = new LinkedHashMap<>();
         if (urlElements.length < 2) {
             return Collections.emptyMap();
         }
 
         for (String queryParam : urlElements[1].split(QUERY_PARAMETERS_SEPARATOR)) {
             String[] queryParamEntry = queryParam.split(QUERY_PARAM_ENTRY_SEPARATOR);
-            requestParams.put(queryParamEntry[0], queryParamEntry[1]);
+            parameters.put(queryParamEntry[0], queryParamEntry[1]);
         }
 
-        return requestParams;
+        return parameters;
     }
 
     @Override
@@ -93,7 +97,7 @@ public class RequestStartLine {
         return "RequestStartLine {" + '\n' +
                 '\t' + "Method: " + method + '\n'+
                 '\t' + "Url: " + url + '\n' +
-                '\t' + "RequestParams: " + requestParams + '\n' +
+                '\t' + "RequestParams: " + parameters + '\n' +
                 '\t' + "Version: " + version + '\n' +
                 '}';
     }

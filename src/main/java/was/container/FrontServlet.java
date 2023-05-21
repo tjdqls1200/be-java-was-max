@@ -44,7 +44,9 @@ public class FrontServlet extends BaseServlet {
 
         LOGGER.info("CONTROLLER PROCESS START");
 
-        controllerProxy.process(request, response, requestMapping);
+        HttpServletRequest servletRequest = (HttpServletRequest) request;
+
+        controllerProxy.process(servletRequest, response, requestMapping);
     }
 
     private Optional<RequestMapping> findRequestMapping(HttpRequest request) {
