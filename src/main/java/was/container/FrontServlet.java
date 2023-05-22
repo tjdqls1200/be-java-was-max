@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FrontServlet extends BaseServlet {
     private static final Logger LOGGER = LoggerFactory.getLogger(FrontServlet.class);
 
+    private boolean isInit = false;
+
     //TODO 초기화, 관리 어떻게 할 것인지
     private final List<ControllerProxy> controllers = List.of(
             new UserControllerProxy(new UserController(new UserService(new UserRepositoryImpl())))
@@ -26,6 +28,7 @@ public class FrontServlet extends BaseServlet {
 
     @Override
     public void init() {
+        isInit = true;
         LOGGER.info("FRONT SERVLET INIT");
         for (var controller : controllers) {
             for (String mappingUrl : ControllerProxy.findAllMappingUrl(controller)) {
@@ -43,15 +46,17 @@ public class FrontServlet extends BaseServlet {
         final ControllerProxy controller = handlers.get(requestFormat);
 
         try {
-            LOGGER.info("CONTROLLER PROCESS START");
             controller.process(request, response);
         } catch (Exception ex) {
             LOGGER.info(ex.getClass().getName());
         }
-        LOGGER.info("CONTROLLER PROCESS COMPLETE");
     }
 
     private String convertUrlFormat(String url) {
         return url.replaceAll(ControllerProxy.PATH_VARIABLE_PATTERN, ControllerProxy.NUMBER_FORMAT);
+    }
+
+    public boolean isInit() {
+        return isInit;
     }
 }

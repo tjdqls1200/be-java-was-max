@@ -29,14 +29,13 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
+        LOGGER.info("HTTP REQUEST PARSING START");
+
         try (reader; writer) {
-            LOGGER.info("HTTP REQUEST PARSING START");
             final HttpRequest request = HttpRequest.from(reader);
+            final HttpResponse response = new HttpResponse();
 
-            LOGGER.info(request.toString());
-            LOGGER.info("HTTP REQUEST PARSING COMPLETE");
-
-            handle(request);
+            handle(request, response);
 
             LOGGER.info("HTTP RESPONSE COMPLETE");
         } catch (IOException | IllegalArgumentException ex){
@@ -44,14 +43,14 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void handle(final HttpRequest request) {
+    private void handle(final HttpRequest request, final HttpResponse response) {
         final String requestUrl = request.getUrl();
 
         var contentType = ContentType.from(requestUrl);
 
         if (contentType.isEmpty()) {
             LOGGER.info("FORWARD SERVLET REQUEST");
-            forwardRequest(request);
+            forwardRequest(request, response);
             return;
         }
 
@@ -71,12 +70,14 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void forwardRequest(final HttpRequest request) {
+    private void forwardRequest(final HttpRequest request, final HttpResponse response) {
         final FrontServlet frontServlet = new FrontServlet();
 
-        frontServlet.init();
+        if (!frontServlet.isInit()) {
+            frontServlet.init();
+        }
 
-        frontServlet.service(request, new HttpResponse());
+        frontServlet.service(request, response);
     }
 
     private Path findStaticPath(String requestPath) throws URISyntaxException {
