@@ -1,4 +1,4 @@
-package was.spring.servlet.mvc.controller;
+package board.mvc.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

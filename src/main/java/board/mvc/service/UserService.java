@@ -1,7 +1,7 @@
-package was.spring.servlet.mvc.service;
+package board.mvc.service;
 
-import was.spring.servlet.mvc.controller.dto.UserJoinDto;
-import was.spring.servlet.mvc.repository.UserRepository;
+import board.mvc.controller.dto.UserJoinDto;
+import board.mvc.repository.UserRepository;
 
 public class UserService {
     private final UserRepository userRepository;

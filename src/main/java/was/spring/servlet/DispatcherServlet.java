@@ -2,9 +2,9 @@ package was.spring.servlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.spring.servlet.mvc.controller.UserController;
-import was.spring.servlet.mvc.repository.UserRepositoryImpl;
-import was.spring.servlet.mvc.service.UserService;
+import board.mvc.controller.UserController;
+import board.mvc.repository.UserRepositoryImpl;
+import board.mvc.service.UserService;
 import was.request.HttpRequest;
 import was.response.HttpResponse;
 

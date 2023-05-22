@@ -1,4 +1,4 @@
-package was.spring.servlet.annotation;
+package was.spring.servlet.mvc.controller;
 
 import was.common.HttpMethod;
 

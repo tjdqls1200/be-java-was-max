@@ -1,11 +1,12 @@
-package was.spring.servlet.mvc.controller;
+package board.mvc.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import was.common.HttpMethod;
-import was.spring.servlet.mvc.controller.dto.UserJoinDto;
-import was.spring.servlet.annotation.RequestMapping;
-import was.spring.servlet.mvc.service.UserService;
+import board.mvc.controller.dto.UserJoinDto;
+import was.spring.servlet.mvc.controller.RequestMapping;
+import board.mvc.service.UserService;
+import was.spring.servlet.mvc.controller.Controller;
 
 public class UserController implements Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
