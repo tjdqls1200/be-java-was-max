@@ -1,4 +1,4 @@
-package was.container.mvc.controller.proxy;
+package was.container.annotation;
 
 import was.common.HttpMethod;
 
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RequestMapping {
-    String url();
+    String url() default "";
 
     HttpMethod method();
 }

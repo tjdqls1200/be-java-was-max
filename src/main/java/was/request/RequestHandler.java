@@ -13,7 +13,7 @@ import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.container.FrontServlet;
+import was.container.DispatcherServlet;
 import was.response.HttpResponse;
 
 public class RequestHandler implements Runnable {
@@ -35,6 +35,8 @@ public class RequestHandler implements Runnable {
             final HttpRequest request = HttpRequest.from(reader);
             final HttpResponse response = new HttpResponse();
 
+            LOGGER.info(request.toString());
+
             handle(request, response);
 
             LOGGER.info("HTTP RESPONSE COMPLETE");
@@ -49,15 +51,14 @@ public class RequestHandler implements Runnable {
         var contentType = ContentType.from(requestUrl);
 
         if (contentType.isEmpty()) {
-            LOGGER.info("FORWARD SERVLET REQUEST");
-            forwardRequest(request, response);
+            sendDynamicRequest(request, response);
             return;
         }
 
-        sendStaticResource(requestUrl, contentType.get());
+        sendStaticRequest(requestUrl, contentType.get());
     }
 
-    private void sendStaticResource(final String requestPath, final ContentType contentType) {
+    private void sendStaticRequest(final String requestPath, final ContentType contentType) {
         //TODO
         // html, css, ico 등에 따라 처리 필요
         try {
@@ -70,14 +71,14 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void forwardRequest(final HttpRequest request, final HttpResponse response) {
-        final FrontServlet frontServlet = new FrontServlet();
+    private void sendDynamicRequest(final HttpRequest request, final HttpResponse response) {
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
-        if (!frontServlet.isInit()) {
-            frontServlet.init();
+        if (!dispatcherServlet.isInit()) {
+            dispatcherServlet.init();
         }
 
-        frontServlet.service(request, response);
+        dispatcherServlet.doDispatch(request, response);
     }
 
     private Path findStaticPath(String requestPath) throws URISyntaxException {
