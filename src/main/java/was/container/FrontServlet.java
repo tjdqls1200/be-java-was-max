@@ -2,59 +2,56 @@ package was.container;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.common.HttpMethod;
+import was.container.mvc.controller.UserController;
+import was.container.mvc.controller.proxy.UserControllerProxy;
+import was.container.mvc.repository.UserRepositoryImpl;
+import was.container.mvc.service.UserService;
 import was.container.mvc.controller.proxy.ControllerProxy;
 import was.request.HttpRequest;
 import was.response.HttpResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FrontServlet extends BaseServlet {
     private static final Logger LOGGER = LoggerFactory.getLogger(FrontServlet.class);
 
-    private static final List<Class<? extends RequestMapping>> requestMappings = List.of(
-            UserRequestMapping.class
+    //TODO 초기화, 관리 어떻게 할 것인지
+    private final List<ControllerProxy> controllers = List.of(
+            new UserControllerProxy(new UserController(new UserService(new UserRepositoryImpl())))
     );
 
-    private final Map<String, List<RequestMapping>> handlers = new ConcurrentHashMap<>();
+    private final Map<String, ControllerProxy> handlers = new ConcurrentHashMap<>();
 
     @Override
     public void init() {
-        for (var requestMapping : requestMappings) {
-            for (RequestMapping mapping : requestMapping.getEnumConstants()) {
-                handlers.computeIfAbsent(mapping.getPrifix(), prifix -> new ArrayList<>()).add(mapping);
+        LOGGER.info("FRONT SERVLET INIT");
+        for (var controller : controllers) {
+            for (String mappingUrl : ControllerProxy.findAllMappingUrl(controller)) {
+                handlers.put(mappingUrl, controller);
             }
         }
     }
 
     @Override
     public void service(HttpRequest request, HttpResponse response) {
-        LOGGER.info("FRONT_SERVLET SERVICE START");
+        LOGGER.info("FRONT SERVLET SERVICE");
+        // "users/1" -> "users/%d" format
+        final String requestFormat = ControllerProxy.converRequestFormat(request.getUrl());
 
-        final RequestMapping requestMapping = findRequestMapping(request)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+        final ControllerProxy controller = handlers.get(requestFormat);
 
-        LOGGER.info("FIND REQUEST MAPPING INFO");
-
-        final ControllerProxy controllerProxy = requestMapping.getController();
-
-        LOGGER.info("CONTROLLER PROCESS START");
-
-        HttpServletRequest servletRequest = (HttpServletRequest) request;
-
-        controllerProxy.process(servletRequest, response, requestMapping);
+        try {
+            LOGGER.info("CONTROLLER PROCESS START");
+            controller.process(request, response);
+        } catch (Exception ex) {
+            LOGGER.info(ex.getClass().getName());
+        }
+        LOGGER.info("CONTROLLER PROCESS COMPLETE");
     }
 
-    private Optional<RequestMapping> findRequestMapping(HttpRequest request) {
-        final String requestUrl = request.getUrl();
-        final HttpMethod method = request.getMethod();
-
-        return handlers.get(requestUrl).stream()
-                .filter(requestMapping -> requestMapping.isMapped(requestUrl, method))
-                .findFirst();
+    private String convertUrlFormat(String url) {
+        return url.replaceAll(ControllerProxy.PATH_VARIABLE_PATTERN, ControllerProxy.NUMBER_FORMAT);
     }
 }

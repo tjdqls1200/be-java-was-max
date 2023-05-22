@@ -50,6 +50,7 @@ public class RequestHandler implements Runnable {
         var contentType = ContentType.from(requestUrl);
 
         if (contentType.isEmpty()) {
+            LOGGER.info("FORWARD SERVLET REQUEST");
             forwardRequest(request);
             return;
         }

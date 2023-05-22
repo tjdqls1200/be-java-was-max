@@ -46,6 +46,10 @@ public class HttpRequest {
         return requestBody;
     }
 
+    public String getParameter(String name) {
+        return startLine.getParameter(name);
+    }
+
     public static HttpRequest from(BufferedReader br) throws IOException {
         final RequestStartLine startLine = RequestStartLine.parse(br.readLine());
         final HttpHeaders headers = readHeaders(br);
