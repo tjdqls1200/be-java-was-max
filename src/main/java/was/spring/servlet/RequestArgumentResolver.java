@@ -1,4 +1,4 @@
-package was.container;
+package was.spring.servlet;
 
 import was.request.HttpRequest;
 

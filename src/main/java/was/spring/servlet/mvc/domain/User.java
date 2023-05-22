@@ -1,4 +1,4 @@
-package was.container.mvc.domain;
+package was.spring.servlet.mvc.domain;
 
 public class User {
     private Long id;

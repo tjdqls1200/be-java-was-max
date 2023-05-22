@@ -1,8 +1,8 @@
-package was.container.mvc.repository;
+package was.spring.servlet.mvc.repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.container.mvc.domain.User;
+import was.spring.servlet.mvc.domain.User;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

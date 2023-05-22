@@ -1,4 +1,4 @@
-package was.container.annotation;
+package was.spring.servlet.annotation;
 
 import was.common.HttpMethod;
 

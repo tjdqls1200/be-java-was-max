@@ -1,6 +1,6 @@
-package was.container.mvc.controller.dto;
+package was.spring.servlet.mvc.controller.dto;
 
-import was.container.mvc.domain.User;
+import was.spring.servlet.mvc.domain.User;
 
 public class UserJoinDto {
     private String name;
