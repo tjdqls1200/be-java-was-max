@@ -40,7 +40,7 @@ public class RequestHandler implements Runnable {
             handle(request, response);
 
             LOGGER.info("HTTP RESPONSE COMPLETE");
-        } catch (IOException | IllegalArgumentException ex){
+        } catch (IOException | IllegalArgumentException ex) {
             LOGGER.error(ex.getMessage());
         }
     }

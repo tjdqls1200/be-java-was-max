@@ -7,6 +7,7 @@ import was.spring.servlet.mvc.controller.RequestMapping;
 import was.spring.servlet.mvc.controller.Controller;
 import was.request.HttpRequest;
 import was.response.HttpResponse;
+import was.spring.servlet.resolver.RequestArgumentResolver;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -21,24 +22,24 @@ public class ControllerAdapter {
     private static final String PATH_VARIABLE_PATTERN = "\\{[^}]+}";
     private static final String NUMBER_FORMAT = "%d";
 
-    private final Map<String, Controller> handlers;
     private final RequestArgumentResolver argumentResolver = new RequestArgumentResolver();
+    private final Map<String, Controller> controllers;
 
-    public ControllerAdapter(List<Controller> controllers) {
-        Map<String, Controller> handlers = new HashMap<>();
+    public ControllerAdapter(List<Controller> initControllers) {
+        Map<String, Controller> controllers = new HashMap<>();
 
-        for (Controller controller : controllers) {
-            for (String mappingUrl : findAllMappingUrl(controller)) {
-                handlers.put(mappingUrl, controller);
+        for (Controller initController : initControllers) {
+            for (String mappingUrl : findAllMappingUrl(initController)) {
+                controllers.put(mappingUrl, initController);
             }
         }
 
-        this.handlers = handlers;
+        this.controllers = controllers;
     }
 
     public void handle(HttpRequest request, HttpResponse response) {
         final String mappingUrl = toMappingUrl(request.getUrl());
-        final Controller controller = handlers.get(mappingUrl);
+        final Controller controller = controllers.get(mappingUrl);
 
         try {
             Method method = findHandleMethod(request, controller).orElseThrow(IllegalArgumentException::new);
@@ -53,31 +54,26 @@ public class ControllerAdapter {
 
 
     private Optional<Method> findHandleMethod(HttpRequest request, Controller controller) {
-        final String url = request.getUrl();
+        final String requestUrl = request.getUrl();
         final HttpMethod httpMethod = request.getMethod();
 
-        for (Method method : controller.getClass().getDeclaredMethods()) {
-            if (!method.isAnnotationPresent(RequestMapping.class)) {
-                continue;
-            }
-            if (isMatchedRequestMapping(url, httpMethod, method.getDeclaredAnnotation(RequestMapping.class))) {
-                return Optional.of(method);
-            }
-        }
-
-        return Optional.empty();
+        return Arrays.stream(controller.getClass().getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .filter(method -> isMatchedRequestMapping(method, requestUrl, httpMethod))
+                .findFirst();
     }
 
-    private boolean isMatchedRequestMapping(String requestUrl, HttpMethod requestMethod, RequestMapping requestMapping) {
-        return requestUrl.equals(requestMapping.url()) && requestMethod == requestMapping.method();
+    private boolean isMatchedRequestMapping(Method method, String requestUrl, HttpMethod httpMethod) {
+        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+
+        return requestMapping.url().equals(requestUrl) && requestMapping.method() == httpMethod;
     }
 
     private List<String> findAllMappingUrl(Controller controller) {
         return Arrays.stream(controller.getClass().getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .map(method -> method.getDeclaredAnnotation(RequestMapping.class))
-                .map(RequestMapping::url)
-                .map(this::toMappingUrl)
+                .map(requestMapping -> toMappingUrl(requestMapping.url()))
                 .collect(Collectors.toList());
     }
 
