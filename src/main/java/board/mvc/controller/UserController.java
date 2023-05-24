@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import was.common.HttpMethod;
 import was.spring.servlet.mvc.controller.Controller;
-import was.spring.servlet.mvc.controller.ModelAttribute;
 import was.spring.servlet.mvc.controller.RequestMapping;
 
 public class UserController implements Controller {
@@ -19,7 +18,7 @@ public class UserController implements Controller {
     }
 
     @RequestMapping(url = "/users", method = HttpMethod.POST)
-    public void join(@ModelAttribute UserJoinDto userJoinDto) {
+    public void join(UserJoinDto userJoinDto) {
         LOGGER.info("User Join Start");
         userService.join(userJoinDto);
     }

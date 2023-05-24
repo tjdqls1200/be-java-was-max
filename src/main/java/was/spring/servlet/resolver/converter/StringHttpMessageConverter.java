@@ -20,8 +20,14 @@ public class StringHttpMessageConverter implements HttpMessageConverter {
 
     @Override
     public Object read(Parameter parameter, String bodyMessage) {
-        int startIndex = bodyMessage.indexOf(parameter.getName()) + parameter.getName().length();
+        //TODO refactor
+        int startIndex = bodyMessage.indexOf(parameter.getName()) + parameter.getName().length() + 1;
 
-        return null;
+        int endIndex = startIndex;
+        while (endIndex < bodyMessage.length() && bodyMessage.charAt(endIndex) != '&') {
+            ++endIndex;
+        }
+
+        return bodyMessage.substring(startIndex, endIndex);
     }
 }
