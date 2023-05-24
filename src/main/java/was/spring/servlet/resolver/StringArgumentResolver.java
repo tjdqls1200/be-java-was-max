@@ -5,7 +5,7 @@ import was.request.HttpRequest;
 import java.lang.reflect.Parameter;
 import java.util.NoSuchElementException;
 
-public class StringParameterConverter implements MethodArgumentResolver {
+public class StringArgumentResolver implements MethodArgumentResolver {
     @Override
     public boolean canResolve(Parameter parameter) {
         return ParameterType.from(parameter.getType()) == ParameterType.STRING;

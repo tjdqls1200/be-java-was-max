@@ -1,5 +1,10 @@
 package was.request;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import was.response.HttpResponse;
+import was.spring.servlet.DispatcherServlet;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,11 +15,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import was.spring.servlet.DispatcherServlet;
-import was.response.HttpResponse;
 
 public class RequestHandler implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);

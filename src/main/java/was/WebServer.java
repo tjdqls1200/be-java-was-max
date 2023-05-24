@@ -1,15 +1,15 @@
 package was;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import was.request.RequestHandler;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import was.request.RequestHandler;
 
 public class WebServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);

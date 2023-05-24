@@ -1,10 +1,10 @@
 package was.spring.servlet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import board.mvc.controller.UserController;
 import board.mvc.repository.UserRepositoryImpl;
 import board.mvc.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import was.request.HttpRequest;
 import was.response.HttpResponse;
 

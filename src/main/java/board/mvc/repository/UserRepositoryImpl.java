@@ -1,8 +1,8 @@
 package board.mvc.repository;
 
+import board.mvc.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import board.mvc.domain.User;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

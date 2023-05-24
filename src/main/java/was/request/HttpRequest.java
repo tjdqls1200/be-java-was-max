@@ -2,6 +2,7 @@ package was.request;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import was.common.HeaderType;
 import was.common.HttpHeaders;
 import was.common.HttpMethod;
 
@@ -40,6 +41,10 @@ public class HttpRequest {
 
     public Map<String, List<String>> getHeaders() {
         return header.getHeaders();
+    }
+
+    public List<String> getHeader(String key) {
+        return header.getHeader(key);
     }
 
     public String getRequestBody() {

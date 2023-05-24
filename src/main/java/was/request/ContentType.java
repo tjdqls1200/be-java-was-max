@@ -15,7 +15,8 @@ public enum ContentType {
     SCALABLE_VECTOR_GRAPHICS(".svg", "image/svg+xml"),
 
     //TODO json, form 데이터는 extension이 없는데 ContentType 구조 고민
-    FORM_DATA("none", "application/x-www-form-urlencoded");
+    FORM_DATA("none", "application/x-www-form-urlencoded"),
+    JSON(".json", "application/json");
 
     private final String extension;
 

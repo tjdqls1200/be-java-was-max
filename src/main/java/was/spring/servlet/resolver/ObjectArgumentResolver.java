@@ -1,15 +1,15 @@
 package was.spring.servlet.resolver;
 
+import was.common.HttpMethod;
 import was.request.HttpRequest;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
-public class ObjectParameterConverter implements MethodArgumentResolver {
+public class ObjectArgumentResolver implements MethodArgumentResolver {
     @Override
     public boolean canResolve(Parameter parameter) {
         return ParameterType.from(parameter.getType()) == ParameterType.OBJECT;
@@ -20,6 +20,7 @@ public class ObjectParameterConverter implements MethodArgumentResolver {
         final Class<?> parameterType = parameter.getType();
         final Object[] arguments = getArguments(request, parameterType);
 
+
         try {
             return findConstructor(parameterType, arguments.length).newInstance(arguments);
         } catch (Exception e) {
@@ -29,8 +30,12 @@ public class ObjectParameterConverter implements MethodArgumentResolver {
 
     private Object[] getArguments(HttpRequest request, Class<?> parameterType) {
         return Arrays.stream(parameterType.getDeclaredFields())
-                .map(field -> request.getParameter(field.getName()))
+                .map(field -> getArgument(request, field))
                 .toArray();
+    }
+
+    private String getArgument(HttpRequest request, Field field) {
+        return request.getParameter(field.getName());
     }
 
     private Constructor<?> findConstructor(Class<?> parameterType, int argumentCount) throws NoSuchMethodException {
