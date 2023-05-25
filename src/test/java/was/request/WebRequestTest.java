@@ -19,10 +19,14 @@ class WebRequestTest {
     @Test
     void test() throws IOException {
         //given
+        String requestBody = "hello";
+        final int contentLength = requestBody.length();
+
         String testRequest = "" +
                 "GET /index.html HTTP/1.1\n" +
                 "Host: localhost:8080\n" +
                 "Connection: keep-alive\n" +
+                "Content-length: " + contentLength + "\n" +
                 "Accept: */*\n" +
                 "\n" +
                 "hello\n";
@@ -30,6 +34,7 @@ class WebRequestTest {
         var parseHeaders = Map.of(
                 "host", List.of("localhost:8080"),
                 "connection", List.of("keep-alive"),
+                "content-length", List.of(String.valueOf(contentLength)),
                 "accept", List.of("*/*")
         );
 

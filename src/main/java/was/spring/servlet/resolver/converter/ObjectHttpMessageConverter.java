@@ -18,11 +18,7 @@ public class ObjectHttpMessageConverter implements HttpMessageConverter {
 
     @Override
     public boolean canRead(Class<?> parameterType, ContentType contentType) {
-        if (ParameterType.isStandardType(parameterType)) {
-            return false;
-        }
-
-        return true;
+        return !ParameterType.isStandardType(parameterType);
     }
 
     @Override

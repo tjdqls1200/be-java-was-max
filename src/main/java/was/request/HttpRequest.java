@@ -60,9 +60,7 @@ public class HttpRequest {
         final HttpHeaders headers = readHeaders(br);
         final String requestBody = readRequestBody(br, headers.getContentLength());
 
-        final HttpRequest request = new HttpRequest(startLine, headers, requestBody);
-
-        return request;
+        return new HttpRequest(startLine, headers, requestBody);
     }
 
     private static HttpHeaders readHeaders(BufferedReader br) throws IOException {
