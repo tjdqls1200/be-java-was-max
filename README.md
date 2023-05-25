@@ -36,7 +36,8 @@
 [x] @RequestMapping 애노테이션과 리플렉션으로 요청에 맞는 컨트롤러 메서드를 찾는 ControllerAdapter 추가  
 [x] JDK 동적 프록시로 InvocationHandler 사용 학습 -> 적용은 미정  
 [x] ControllerAdapter에서 매핑된 컨트롤러를 찾고 메서드의 파라미터를 만드는 ArgumentResolver 추가  
-[ ] GET, POST 메소드에 따라 ArgumentResolver 방식 변경 -> Body 파싱  
-[ ] ModelAndView, ViewResolver, ReturnValueHandler  
-[ ] Response 생성  
-[ ] 쿠키, 세션
+[x] GET, POST 메소드에 따라 ArgumentResolver 방식 변경 -> POST는 MeesageConverter가 처리, json은 x  
+[ ] 예외 처리, 응답 Response 처리  
+[ ] 쿠키, 세션  
+[ ] 회원 로그인 기능  
+[ ] ModelAndView, ViewResolver  

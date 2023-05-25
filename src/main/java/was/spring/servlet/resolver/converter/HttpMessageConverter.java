@@ -2,12 +2,11 @@ package was.spring.servlet.resolver.converter;
 
 import was.request.ContentType;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
-import java.util.NoSuchElementException;
-
 public interface HttpMessageConverter {
-    boolean canRead(Parameter parameter, ContentType contentType);
+    String PARAMETER_SEPERATOR = "&";
+    String PARAM_ENTRY_SEPERATOR = "=";
 
-    Object read(Parameter parameter, String bodyMessage) throws Exception;
+    boolean canRead(Class<?> parameterType, ContentType contentType);
+
+    Object read(Class<?> parameterType, String parameterName, String requestBody) throws ReflectiveOperationException;
 }

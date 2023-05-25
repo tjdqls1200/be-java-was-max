@@ -1,47 +1,31 @@
 package was.spring.servlet.resolver;
 
-import was.common.HttpMethod;
 import was.request.HttpRequest;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ObjectArgumentResolver implements MethodArgumentResolver {
+    private final ObjectBinder objectBinder = new ObjectBinder();
+
     @Override
-    public boolean canResolve(Parameter parameter) {
-        return ParameterType.from(parameter.getType()) == ParameterType.OBJECT;
+    public boolean canResolve(Class<?> parameterType) {
+        return ParameterType.from(parameterType) == ParameterType.OBJECT;
     }
 
     @Override
-    public Object resolve(HttpRequest request, Parameter parameter) throws NoSuchElementException {
-        final Class<?> parameterType = parameter.getType();
-        final Object[] arguments = getArguments(request, parameterType);
-
-
-        try {
-            return findConstructor(parameterType, arguments.length).newInstance(arguments);
-        } catch (Exception e) {
-            throw new NoSuchElementException();
-        }
+    public Object resolve(HttpRequest request, Class<?> parameterType, String parameterName) throws ReflectiveOperationException {
+        return objectBinder.mapToBind(parameterType, parseArguments(request, parameterType));
     }
 
-    private Object[] getArguments(HttpRequest request, Class<?> parameterType) {
+    private Map<String, String> parseArguments(HttpRequest request, Class<?> parameterType) {
         return Arrays.stream(parameterType.getDeclaredFields())
-                .map(field -> getArgument(request, field))
-                .toArray();
+                .collect(Collectors.toMap(Field::getName, field -> getArgument(request, field)));
     }
 
     private String getArgument(HttpRequest request, Field field) {
         return request.getParameter(field.getName());
-    }
-
-    private Constructor<?> findConstructor(Class<?> parameterType, int argumentCount) throws NoSuchMethodException {
-        return Arrays.stream(parameterType.getDeclaredConstructors())
-                .filter(constructor -> constructor.getParameterCount() == argumentCount)
-                .findFirst()
-                .orElseThrow(NoSuchMethodException::new);
     }
 }
