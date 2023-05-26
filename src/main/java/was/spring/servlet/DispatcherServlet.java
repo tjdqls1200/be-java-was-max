@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import was.request.HttpRequest;
 import was.response.HttpResponse;
+import was.spring.servlet.mvc.view.ModelAndView;
+import was.spring.servlet.mvc.view.View;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ public class DispatcherServlet {
     private boolean isInit = false;
 
     private ControllerAdapter controllerAdapter;
+
+    private ViewResolver viewResolver = new ViewResolver();
 
     public DispatcherServlet() {
         init();
@@ -32,7 +36,16 @@ public class DispatcherServlet {
     public void doDispatch(HttpRequest request, HttpResponse response) {
         LOGGER.info("FRONT SERVLET SERVICE");
 
-        controllerAdapter.handle(request, response);
+        final ModelAndView mv = controllerAdapter.handle(request, response);
+
+        final View view = viewResolver.resolveViewname(mv.getViewName());
+
+        //TODO
+        if (view == null) {
+            return;
+        }
+
+        view.render(mv.getModel(), request, response);
     }
 
     public boolean isInit() {

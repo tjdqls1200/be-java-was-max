@@ -4,6 +4,7 @@ import was.common.HttpMethod;
 import was.request.ContentType;
 import was.request.HttpRequest;
 import was.spring.servlet.mvc.controller.PathVariable;
+import was.spring.servlet.mvc.view.Model;
 import was.spring.servlet.resolver.converter.HttpMessageConverter;
 import was.spring.servlet.resolver.converter.ObjectHttpMessageConverter;
 import was.spring.servlet.resolver.converter.StringHttpMessageConverter;
@@ -29,8 +30,8 @@ public class RequestArgumentResolver {
         List<Object> requiredParams = new ArrayList<>();
 
         try {
-            for (Parameter requiredParameter : method.getParameters()) {
-                requiredParams.add(makeParameter(request, requiredParameter));
+            for (Parameter parameter : method.getParameters()) {
+                requiredParams.add(makeParameter(request, parameter));
             }
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
@@ -43,6 +44,9 @@ public class RequestArgumentResolver {
         final Class<?> parameterType = parameter.getType();
         final String parameterName = parameter.getName();
 
+        if (parameter.getType() == Model.class) {
+            return new Model();
+        }
         if (parameter.isAnnotationPresent(PathVariable.class)) {
         }
         //TODO 예외 처리

@@ -1,7 +1,9 @@
-package was.request;
+package was;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import was.request.ContentType;
+import was.request.HttpRequest;
 import was.response.HttpResponse;
 import was.spring.servlet.DispatcherServlet;
 
@@ -38,6 +40,7 @@ public class RequestHandler implements Runnable {
             LOGGER.info(request.toString());
 
             handle(request, response);
+            responseBody(writer, response.getResponseBody().getBytes());
 
             LOGGER.info("HTTP RESPONSE COMPLETE");
         } catch (IOException | IllegalArgumentException ex) {
@@ -52,6 +55,8 @@ public class RequestHandler implements Runnable {
 
         if (contentType.isEmpty()) {
             sendDynamicRequest(request, response);
+
+            response200Header(ContentType.HTML.getMimeType(), response.getResponseBody().length());
             return;
         }
 

@@ -7,7 +7,10 @@ import was.request.HttpRequest;
 import was.response.HttpResponse;
 import was.spring.servlet.mvc.controller.Controller;
 import was.spring.servlet.mvc.controller.RequestMapping;
+import was.spring.servlet.mvc.view.Model;
+import was.spring.servlet.mvc.view.ModelAndView;
 import was.spring.servlet.resolver.RequestArgumentResolver;
+import was.spring.servlet.resolver.StringReturnValueHandler;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -23,6 +26,7 @@ public class ControllerAdapter {
     private static final String NUMBER_FORMAT = "%d";
 
     private final RequestArgumentResolver argumentResolver = new RequestArgumentResolver();
+    private final StringReturnValueHandler returnValueHandler = new StringReturnValueHandler();
     private final Map<String, Controller> controllers;
 
     public ControllerAdapter(List<Controller> initControllers) {
@@ -37,29 +41,39 @@ public class ControllerAdapter {
         this.controllers = controllers;
     }
 
-    public void handle(HttpRequest request, HttpResponse response) {
+    public ModelAndView handle(HttpRequest request, HttpResponse response) {
         final String mappingUrl = toMappingUrl(request.getUrl());
         final Controller controller = controllers.get(mappingUrl);
+        ModelAndView mv = null;
 
         try {
             Method method = findHandleMethod(request, controller).orElseThrow(IllegalArgumentException::new);
-            Object[] requiredArguments = argumentResolver.resolve(request, method);
+            Object[] args = argumentResolver.resolve(request, method);
+            Object result = method.invoke(controller, args);
 
-            method.invoke(controller, requiredArguments);
-
+            mv = returnValueHandler.handle(method, result, getModel(args));
         } catch (Exception ex) {
             LOGGER.info(ex.getClass().getName());
         }
+
+        return mv;
+    }
+
+    private Model getModel(Object[] args) {
+        for (Object argument : args) {
+            if (argument.getClass() == Model.class) {
+                return (Model) argument;
+            }
+        }
+
+        return new Model();
     }
 
 
     private Optional<Method> findHandleMethod(HttpRequest request, Controller controller) {
-        final String requestUrl = request.getUrl();
-        final HttpMethod httpMethod = request.getMethod();
-
         return Arrays.stream(controller.getClass().getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .filter(method -> isMatchedRequestMapping(method, requestUrl, httpMethod))
+                .filter(method -> isMatchedRequestMapping(method, request.getUrl(), request.getMethod()))
                 .findFirst();
     }
 

@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ObjectBinderTest {
     @DisplayName("클래스 타입과 arguments를 통해 객체를 생성한다.")
@@ -57,7 +58,6 @@ class ObjectBinderTest {
     static class TestObjectForFail {
         private String name;
         private int age;
-
 
         public TestObjectForFail(String name, int age) {
             this.name = name;

@@ -2,7 +2,6 @@ package was.request;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.common.HeaderType;
 import was.common.HttpHeaders;
 import was.common.HttpMethod;
 

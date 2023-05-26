@@ -27,6 +27,10 @@ public enum ContentType {
         this.mimeType = mimeType;
     }
 
+    public String getExtension() {
+        return extension;
+    }
+
     public String getMimeType() {
         return mimeType;
     }

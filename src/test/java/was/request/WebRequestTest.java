@@ -11,8 +11,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class WebRequestTest {
     @DisplayName("올바른 Request를 보내면 객체가 성공적으로 생성된다.")

@@ -22,6 +22,10 @@ public class HttpHeaders {
         return headers;
     }
 
+    public void addHeader(String key, String value) {
+        headers.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
+    }
+
     public static HttpHeaders parse(final List<String> headerLines) {
         final Map<String, List<String>> headers = new LinkedHashMap<>();
 
