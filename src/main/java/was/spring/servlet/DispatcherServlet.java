@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import was.request.HttpRequest;
 import was.response.HttpResponse;
+import was.spring.servlet.http.HttpStatus;
 import was.spring.servlet.mvc.view.ModelAndView;
 import was.spring.servlet.mvc.view.View;
 
@@ -38,7 +39,14 @@ public class DispatcherServlet {
 
         final ModelAndView mv = controllerAdapter.handle(request, response);
 
-        final View view = viewResolver.resolveViewname(mv.getViewName());
+        //TODO refactor
+        response.setStatus(mv.getHttpStatus());
+        if (mv.getHttpStatus() == HttpStatus.REDIRECT || mv.getViewName().startsWith("redirect:")) {
+            response.addHeader("Location", mv.getViewName());
+            return;
+        }
+
+        final View view = viewResolver.resolveViewName(mv.getViewName());
 
         //TODO
         if (view == null) {

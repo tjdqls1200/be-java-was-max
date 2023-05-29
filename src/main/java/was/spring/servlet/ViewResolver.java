@@ -10,7 +10,7 @@ public class ViewResolver {
     private static final String PREFIX = "/templates/";
     private static final String SUFFIX = ".html";
 
-    public View resolveViewname(String viewName) {
+    public View resolveViewName(String viewName) {
         Path path = getPath(viewName);
 
         if (path == null || Files.notExists(path)) {

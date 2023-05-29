@@ -9,10 +9,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HttpHeaders {
-    private static final String COLON = ":";
-    private static final String COMMA = ",";
+    private static final String HEADER_ENTRY_SEPARATOR = ": ";
+    private static final String HEADER_VALUE_SEPARATOR = ",";
+    private static final String EMPTY = "";
+    private static final int HEADER_KEY_INDEX = 0;
 
     private final Map<String, List<String>> headers;
+
+    public HttpHeaders() {
+        headers = new LinkedHashMap<>();
+    }
 
     protected HttpHeaders(Map<String, List<String>> headers) {
         this.headers = headers;
@@ -30,8 +36,8 @@ public class HttpHeaders {
         final Map<String, List<String>> headers = new LinkedHashMap<>();
 
         for (String headerLine : headerLines) {
-            String key = headerLine.split(COLON)[0];
-            List<String> values = parseHeaderValues(headerLine.replaceFirst(key + COLON, ""));
+            String key = headerLine.split(HEADER_ENTRY_SEPARATOR)[HEADER_KEY_INDEX];
+            List<String> values = parseHeaderValues(headerLine.replaceFirst(key + HEADER_ENTRY_SEPARATOR, EMPTY));
 
             headers.put(HeaderType.keyOf(key), values);
         }
@@ -54,9 +60,19 @@ public class HttpHeaders {
     }
 
     private static List<String> parseHeaderValues(String headerValues) {
-        return Arrays.stream(headerValues.split(COMMA))
+        return Arrays.stream(headerValues.split(HEADER_VALUE_SEPARATOR))
                 .map(String::trim)
                 .collect(Collectors.toList());
+    }
+
+    public String toHeadersOutputFormat() {
+        return headers.entrySet().stream()
+                .map(this::toHeaderOutputFormat)
+                .collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    private String toHeaderOutputFormat(Map.Entry<String, List<String>> entry) {
+        return entry.getKey() + HEADER_ENTRY_SEPARATOR + String.join(HEADER_VALUE_SEPARATOR, entry.getValue());
     }
 
     @Override

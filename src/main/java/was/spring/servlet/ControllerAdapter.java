@@ -49,6 +49,7 @@ public class ControllerAdapter {
         try {
             Method method = findHandleMethod(request, controller).orElseThrow(IllegalArgumentException::new);
             Object[] args = argumentResolver.resolve(request, method);
+
             Object result = method.invoke(controller, args);
 
             mv = returnValueHandler.handle(method, result, getModel(args));

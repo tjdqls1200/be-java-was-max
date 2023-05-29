@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import was.common.HttpMethod;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -69,7 +71,7 @@ public class RequestStartLine {
             throw new IllegalArgumentException("Start line is not exist");
         }
 
-        String[] elements = startLine.split(SP);
+        String[] elements = URLDecoder.decode(startLine, StandardCharsets.UTF_8).split(SP);
 
         if (elements.length != ELEMENTS_COUNT) {
             throw new IllegalArgumentException("Invalid Request start Line");

@@ -1,5 +1,6 @@
 package was.spring.servlet.mvc.view;
 
+import was.common.HttpHeaders;
 import was.spring.servlet.http.HttpStatus;
 
 public class ModelAndView {
@@ -23,6 +24,10 @@ public class ModelAndView {
 
     public Model getModel() {
         return model;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 
     public static ModelAndViewBuilder builder() {

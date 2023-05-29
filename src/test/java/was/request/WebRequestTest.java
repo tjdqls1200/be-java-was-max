@@ -41,7 +41,7 @@ class WebRequestTest {
         BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(testRequest.getBytes())));
 
         //when
-        HttpRequest request = HttpRequest.from(br);
+        HttpRequest request = HttpRequest.parse(br);
 
         //then
         assertAll(

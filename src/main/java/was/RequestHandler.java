@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -26,7 +27,7 @@ public class RequestHandler implements Runnable {
     private final DataOutputStream writer;
 
     public RequestHandler(InputStream in, OutputStream out) {
-        this.reader = new BufferedReader(new InputStreamReader(in));
+        this.reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         this.writer = new DataOutputStream(out);
     }
 
@@ -34,17 +35,25 @@ public class RequestHandler implements Runnable {
         LOGGER.info("HTTP REQUEST PARSING START");
 
         try (reader; writer) {
-            final HttpRequest request = HttpRequest.from(reader);
+            final HttpRequest request = HttpRequest.parse(reader);
             final HttpResponse response = new HttpResponse();
 
             LOGGER.info(request.toString());
 
             handle(request, response);
-            responseBody(writer, response.getResponseBody().getBytes());
 
             LOGGER.info("HTTP RESPONSE COMPLETE");
         } catch (IOException | IllegalArgumentException ex) {
             LOGGER.error(ex.getMessage());
+        }
+    }
+
+    private void sendResponse(HttpResponse response, DataOutputStream writer) {
+        try {
+            writer.write(response.getOutputFormat().getBytes(StandardCharsets.UTF_8));
+            writer.flush();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -55,8 +64,7 @@ public class RequestHandler implements Runnable {
 
         if (contentType.isEmpty()) {
             sendDynamicRequest(request, response);
-
-            response200Header(ContentType.HTML.getMimeType(), response.getResponseBody().length());
+            sendResponse(response, writer);
             return;
         }
 
@@ -64,8 +72,6 @@ public class RequestHandler implements Runnable {
     }
 
     private void sendStaticRequest(final String requestPath, final ContentType contentType) {
-        //TODO
-        // html, css, ico 등에 따라 처리 필요
         try {
             final byte[] body = Files.readAllBytes(findStaticPath(requestPath));
             response200Header(contentType.getMimeType(), body.length);
