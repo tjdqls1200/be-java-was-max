@@ -1,6 +1,6 @@
 package was.spring.servlet.resolver;
 
-import was.request.HttpRequest;
+import was.http.HttpRequest;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

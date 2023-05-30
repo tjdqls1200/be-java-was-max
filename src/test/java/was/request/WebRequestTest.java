@@ -2,7 +2,8 @@ package was.request;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import was.common.HttpMethod;
+import was.http.HttpRequest;
+import was.http.enums.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

@@ -2,9 +2,9 @@ package was.spring.servlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.common.HttpMethod;
-import was.request.HttpRequest;
-import was.response.HttpResponse;
+import was.http.HttpRequest;
+import was.http.HttpResponse;
+import was.http.enums.HttpMethod;
 import was.spring.servlet.mvc.controller.Controller;
 import was.spring.servlet.mvc.controller.RequestMapping;
 import was.spring.servlet.mvc.view.Model;

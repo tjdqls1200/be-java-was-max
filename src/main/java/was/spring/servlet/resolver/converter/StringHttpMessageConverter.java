@@ -1,6 +1,6 @@
 package was.spring.servlet.resolver.converter;
 
-import was.request.ContentType;
+import was.http.enums.ContentType;
 import was.spring.servlet.resolver.ParameterType;
 
 public class StringHttpMessageConverter implements HttpMessageConverter {

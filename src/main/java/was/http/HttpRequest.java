@@ -1,9 +1,8 @@
-package was.request;
+package was.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.common.HttpHeaders;
-import was.common.HttpMethod;
+import was.http.enums.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -77,7 +76,7 @@ public class HttpRequest {
     }
 
     private static String readRequestBody(BufferedReader br, final int contentLength) throws IOException {
-        char[] body = new char[contentLength];
+        final char[] body = new char[contentLength];
 
         br.read(body, 0, contentLength);
 

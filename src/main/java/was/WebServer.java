@@ -24,17 +24,12 @@ public class WebServer {
 
             Socket clientSocket = serverSocket.accept();
 
-            CompletableFuture.runAsync(toRequestHandler(clientSocket), executorService)
+            CompletableFuture.runAsync(new HttpHandler(clientSocket), executorService)
                     .thenRunAsync(closeSocket(clientSocket));
         }
 
         executorService.shutdown();
         serverSocket.close();
-    }
-
-
-    private static RequestHandler toRequestHandler(Socket clientSocket) throws IOException {
-        return new RequestHandler(clientSocket.getInputStream(), clientSocket.getOutputStream());
     }
 
     private static Runnable closeSocket(Socket clientSocket) {

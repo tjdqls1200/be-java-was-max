@@ -1,6 +1,6 @@
 package was.spring.servlet.mvc.controller;
 
-import was.common.HttpMethod;
+import was.http.enums.HttpMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -28,6 +28,10 @@ public class ModelAndViewBuilder {
     }
 
     public ModelAndView build() {
+        if (httpStatus == null) {
+            httpStatus = HttpStatus.OK;
+        }
+
         return new ModelAndView(model, viewName, httpStatus);
     }
 }

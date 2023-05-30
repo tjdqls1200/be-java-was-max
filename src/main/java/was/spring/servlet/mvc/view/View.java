@@ -2,8 +2,8 @@ package was.spring.servlet.mvc.view;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.request.HttpRequest;
-import was.response.HttpResponse;
+import was.http.HttpRequest;
+import was.http.HttpResponse;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,7 +19,7 @@ public class View {
 
     public void render(Model model, HttpRequest request, HttpResponse response) {
         try {
-            response.addResponseBody(Files.readString(path));
+            response.setResponseBody(Files.readString(path));
         } catch (IOException e) {
             LOGGER.info(e.getClass().getName());
             LOGGER.info(e.getMessage());

@@ -1,4 +1,4 @@
-package was.common;
+package was.http.enums;
 
 import java.util.Arrays;
 
@@ -14,6 +14,7 @@ public enum HeaderType {
     CONTENT_LENGTH("content-length"),
     CONTENT_LOCATION("content-location"),
     CONTENT_TYPE("content-type"),
+    LOCATION("location"),
     COOKIE("cookie"),
     HOST("host"),
     KEEP_ALIVE("keep-alive");

@@ -5,8 +5,10 @@ import board.mvc.repository.UserRepositoryImpl;
 import board.mvc.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.request.HttpRequest;
-import was.response.HttpResponse;
+import was.http.HttpRequest;
+import was.http.HttpResponse;
+import was.http.enums.HeaderType;
+import was.spring.servlet.common.exception.NoSuchViewException;
 import was.spring.servlet.http.HttpStatus;
 import was.spring.servlet.mvc.view.ModelAndView;
 import was.spring.servlet.mvc.view.View;
@@ -14,49 +16,47 @@ import was.spring.servlet.mvc.view.View;
 import java.util.List;
 
 public class DispatcherServlet {
+    private static final DispatcherServlet DISPATCHER_SERVLET = new DispatcherServlet();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private boolean isInit = false;
+    private final ControllerAdapter controllerAdapter;
 
-    private ControllerAdapter controllerAdapter;
+    private final ViewResolver viewResolver = new ViewResolver();
 
-    private ViewResolver viewResolver = new ViewResolver();
-
-    public DispatcherServlet() {
-        init();
-    }
-
-    public void init() {
-        LOGGER.info("FRONT SERVLET INIT");
-        isInit = true;
-        //TODO 컨트롤러 초기화
+    private DispatcherServlet() {
         controllerAdapter = new ControllerAdapter(List.of(
                 new UserController(new UserService(new UserRepositoryImpl()))));
     }
 
-    public void doDispatch(HttpRequest request, HttpResponse response) {
-        LOGGER.info("FRONT SERVLET SERVICE");
+    public static DispatcherServlet getInstance() {
+        return DISPATCHER_SERVLET;
+    }
 
+    public void doDispatch(HttpRequest request, HttpResponse response) {
         final ModelAndView mv = controllerAdapter.handle(request, response);
 
-        //TODO refactor
         response.setStatus(mv.getHttpStatus());
-        if (mv.getHttpStatus() == HttpStatus.REDIRECT || mv.getViewName().startsWith("redirect:")) {
-            response.addHeader("Location", mv.getViewName());
+
+        if (isRedirection(mv)) {
+            response.addHeader(HeaderType.LOCATION, mv.getViewName());
             return;
         }
 
         final View view = viewResolver.resolveViewName(mv.getViewName());
 
-        //TODO
         if (view == null) {
-            return;
+            throw new NoSuchViewException();
         }
 
         view.render(mv.getModel(), request, response);
     }
 
-    public boolean isInit() {
-        return isInit;
+    private boolean isRedirection(ModelAndView mv) {
+        if (mv.getViewName().startsWith("redirect:")) {
+            mv.setHttpStatus(HttpStatus.REDIRECT);
+        }
+
+        return mv.getHttpStatus() == HttpStatus.REDIRECT;
     }
 }

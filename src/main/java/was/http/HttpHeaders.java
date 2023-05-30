@@ -1,4 +1,6 @@
-package was.common;
+package was.http;
+
+import was.http.enums.HeaderType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

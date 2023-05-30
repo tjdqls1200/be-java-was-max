@@ -1,8 +1,8 @@
-package was.request;
+package was.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.common.HttpMethod;
+import was.http.enums.HttpMethod;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

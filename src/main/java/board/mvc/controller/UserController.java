@@ -6,7 +6,7 @@ import board.mvc.controller.dto.UserSessionDto;
 import board.mvc.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import was.common.HttpMethod;
+import was.http.enums.HttpMethod;
 import was.spring.servlet.http.HttpStatus;
 import was.spring.servlet.mvc.controller.Controller;
 import was.spring.servlet.mvc.controller.RequestMapping;

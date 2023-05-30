@@ -1,7 +1,6 @@
-package was.request;
+package was.http.enums;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 public enum ContentType {
     HTML(".html", "text/html;charset=utf-8"),
@@ -14,7 +13,7 @@ public enum ContentType {
     WEB_OPEN_FONT(".woff", "application/x-font-woff"),
     SCALABLE_VECTOR_GRAPHICS(".svg", "image/svg+xml"),
 
-    //TODO json, form 데이터는 extension이 없는데 ContentType 구조 고민
+    //고민
     FORM_DATA("none", "application/x-www-form-urlencoded"),
     JSON(".json", "application/json");
 
@@ -35,9 +34,15 @@ public enum ContentType {
         return mimeType;
     }
 
-    public static Optional<ContentType> from(String path) {
+    public static ContentType from(String path) {
         return Arrays.stream(values())
-                .filter(fileExtension -> path.endsWith(fileExtension.extension))
-                .findFirst();
+                .filter(type -> path.endsWith(type.extension))
+                .findFirst()
+                .orElse(HTML);
+    }
+
+    public static boolean containExtension(String path) {
+        return Arrays.stream(values())
+                .anyMatch(type -> path.endsWith(type.extension));
     }
 }

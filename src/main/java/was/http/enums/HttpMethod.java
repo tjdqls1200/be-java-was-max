@@ -1,4 +1,4 @@
-package was.common;
+package was.http.enums;
 
 import java.util.Arrays;
 
