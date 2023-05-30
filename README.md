@@ -2,6 +2,31 @@
 
 <br>
 
+**동작**
+
+<img width="1025" alt="image" src="https://github.com/tjdqls1200/juniorForum/assets/57752068/1e8defee-4211-439d-91ce-ce0d28e6ff69">
+
+1. HttpRequest 파싱  
+   - StartLine  
+   - Header  
+   - RequestBody  
+2. 정적 리소스 요청이 아니면 DispathcerServlet에 요청 전달  
+3. ControllerAdapter를 통해 @RequestMapping 정보에 맞는 Controller를 찾음  
+4. ArgumentResolver 동작  
+   - Controller 메서드의 파라미터에 필요한 값을 변환  
+   - RequestBody는 HttpMessageConverter가 변환  
+   - 객체는 ObjectBinder가 바인딩  
+5. ReturnValueHandler 동작  
+   - Controller에서 반환 받은 ViewName, ModelAndView를 변환 (ViewName -> ModelAndView)   
+   - 응답에 필요한 처리를 하고 ModelAndView를 반환  
+6. ViewResolver  
+   - 실제 View 경로를 찾아서 View 인스턴스를 생성, 반환  
+7. View  
+   - 실제 View 경로에 있는 ~~HTML을 동적으로 렌더링~~  
+8 Response 전송  
+   
+<br>  
+
 ### 1주차
 
 <br>
@@ -52,17 +77,8 @@
 
 ---
 
-**step-5**  
-[ ] 쿠키, 세션  
-[ ] 로그인 유지  
-
+[ ] 쿠키, 세션    
+[ ] 로그인 유지   
+[ ] ~~동적 HTML~~  
+[ ] 테스트 코드, 리펙토링 마무리  
 <br>
-
-**step-6**  
-[ ] 동적 HTML  
-
-<br>
-
-**step-7**  
-[ ] Board 도메인  
-[ ] 로그인 권한 처리  
