@@ -1,17 +1,18 @@
 package was.spring.servlet;
 
-import board.mvc.controller.UserController;
-import board.mvc.repository.UserRepositoryImpl;
-import board.mvc.service.UserService;
+import cafe.mvc.controller.UserController;
+import cafe.mvc.repository.UserRepositoryImpl;
+import cafe.mvc.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import was.http.HttpRequest;
 import was.http.HttpResponse;
 import was.http.enums.HeaderType;
 import was.spring.servlet.common.exception.NoSuchViewException;
-import was.spring.servlet.http.HttpStatus;
+import was.spring.servlet.common.HttpStatus;
 import was.spring.servlet.mvc.view.ModelAndView;
 import was.spring.servlet.mvc.view.View;
+import was.spring.servlet.resolver.ViewResolver;
 
 import java.util.List;
 

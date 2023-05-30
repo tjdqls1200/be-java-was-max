@@ -1,6 +1,6 @@
-package board.mvc.controller.dto;
+package cafe.mvc.controller.dto;
 
-import board.mvc.domain.User;
+import cafe.mvc.domain.User;
 
 public class UserSessionDto {
     private final Long id;

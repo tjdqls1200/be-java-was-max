@@ -1,16 +1,16 @@
-package board.mvc.controller;
+package cafe.mvc.controller;
 
-import board.mvc.controller.dto.UserJoinDto;
-import board.mvc.controller.dto.UserLoginDto;
-import board.mvc.controller.dto.UserSessionDto;
-import board.mvc.service.UserService;
+import cafe.mvc.controller.dto.UserJoinDto;
+import cafe.mvc.controller.dto.UserLoginDto;
+import cafe.mvc.controller.dto.UserSessionDto;
+import cafe.mvc.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import was.http.enums.HttpMethod;
-import was.spring.servlet.http.HttpStatus;
+import was.spring.servlet.common.HttpStatus;
 import was.spring.servlet.mvc.controller.Controller;
-import was.spring.servlet.mvc.controller.RequestMapping;
-import was.spring.servlet.mvc.controller.ResponseStatus;
+import was.spring.servlet.mvc.controller.annotation.RequestMapping;
+import was.spring.servlet.mvc.controller.annotation.ResponseStatus;
 import was.spring.servlet.mvc.view.Model;
 import was.spring.servlet.mvc.view.ModelAndView;
 

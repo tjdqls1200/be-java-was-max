@@ -3,7 +3,7 @@ package was.spring.servlet.resolver;
 import was.http.HttpRequest;
 import was.http.enums.ContentType;
 import was.http.enums.HttpMethod;
-import was.spring.servlet.mvc.controller.PathVariable;
+import was.spring.servlet.mvc.controller.annotation.PathVariable;
 import was.spring.servlet.mvc.view.Model;
 import was.spring.servlet.resolver.converter.HttpMessageConverter;
 import was.spring.servlet.resolver.converter.ObjectHttpMessageConverter;

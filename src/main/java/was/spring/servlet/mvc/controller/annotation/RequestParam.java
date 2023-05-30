@@ -1,4 +1,4 @@
-package was.spring.servlet.mvc.controller;
+package was.spring.servlet.mvc.controller.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = ElementType.PARAMETER)
-public @interface ModelAttribute {
+public @interface RequestParam {
 }

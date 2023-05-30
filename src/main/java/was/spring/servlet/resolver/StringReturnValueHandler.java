@@ -1,8 +1,8 @@
 package was.spring.servlet.resolver;
 
 import was.spring.servlet.common.exception.NoSuchViewException;
-import was.spring.servlet.http.HttpStatus;
-import was.spring.servlet.mvc.controller.ResponseStatus;
+import was.spring.servlet.common.HttpStatus;
+import was.spring.servlet.mvc.controller.annotation.ResponseStatus;
 import was.spring.servlet.mvc.view.Model;
 import was.spring.servlet.mvc.view.ModelAndView;
 

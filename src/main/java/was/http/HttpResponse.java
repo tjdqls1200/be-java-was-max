@@ -1,7 +1,7 @@
 package was.http;
 
 import was.http.enums.HeaderType;
-import was.spring.servlet.http.HttpStatus;
+import was.spring.servlet.common.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
 

@@ -1,4 +1,4 @@
-package board.mvc.controller.dto;
+package cafe.mvc.controller.dto;
 
 public class UserLoginDto {
     private String username;

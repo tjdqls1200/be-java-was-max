@@ -1,4 +1,4 @@
-package was.spring.servlet.http;
+package was.spring.servlet.common;
 
 public enum HttpStatus {
     OK(200, "OK"),

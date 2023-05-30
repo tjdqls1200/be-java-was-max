@@ -1,10 +1,10 @@
-package board.mvc.service;
+package cafe.mvc.service;
 
-import board.mvc.controller.dto.UserJoinDto;
-import board.mvc.controller.dto.UserLoginDto;
-import board.mvc.controller.dto.UserSessionDto;
-import board.mvc.domain.User;
-import board.mvc.repository.UserRepository;
+import cafe.mvc.controller.dto.UserJoinDto;
+import cafe.mvc.controller.dto.UserLoginDto;
+import cafe.mvc.controller.dto.UserSessionDto;
+import cafe.mvc.domain.User;
+import cafe.mvc.repository.UserRepository;
 
 public class UserService {
     private final UserRepository userRepository;

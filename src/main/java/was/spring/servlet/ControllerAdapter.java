@@ -6,7 +6,7 @@ import was.http.HttpRequest;
 import was.http.HttpResponse;
 import was.http.enums.HttpMethod;
 import was.spring.servlet.mvc.controller.Controller;
-import was.spring.servlet.mvc.controller.RequestMapping;
+import was.spring.servlet.mvc.controller.annotation.RequestMapping;
 import was.spring.servlet.mvc.view.Model;
 import was.spring.servlet.mvc.view.ModelAndView;
 import was.spring.servlet.resolver.RequestArgumentResolver;

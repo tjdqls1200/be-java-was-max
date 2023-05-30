@@ -1,4 +1,4 @@
-package was.spring.servlet;
+package was.spring.servlet.resolver;
 
 import was.spring.servlet.mvc.view.View;
 

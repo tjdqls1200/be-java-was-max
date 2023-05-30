@@ -1,4 +1,4 @@
-package board.mvc.domain;
+package cafe.mvc.domain;
 
 public class User {
     private Long id;

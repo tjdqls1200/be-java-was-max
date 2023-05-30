@@ -1,6 +1,6 @@
 package was.spring.servlet.mvc.view;
 
-import was.spring.servlet.http.HttpStatus;
+import was.spring.servlet.common.HttpStatus;
 
 import java.util.Map;
 

@@ -1,6 +1,6 @@
-package board.mvc.repository;
+package cafe.mvc.repository;
 
-import board.mvc.domain.User;
+import cafe.mvc.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
