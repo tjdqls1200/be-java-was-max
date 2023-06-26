@@ -35,17 +35,13 @@ public class HttpHandler implements Runnable {
         try (in; out) {
             final HttpRequest request = HttpRequest.parse(in);
             final HttpResponse response = new HttpResponse();
-
-//            LOGGER.info(request.toString());
-
+            LOGGER.info(request.toString());
             handle(request, response);
-
             sendResponse(request, response);
 
         } catch (IOException | IllegalArgumentException ex) {
             LOGGER.error(ex.getMessage());
         }
-
         LOGGER.info("HTTP RESPONSE COMPLETE");
     }
 

@@ -17,7 +17,9 @@ public class ObjectArgumentResolver implements MethodArgumentResolver {
 
     @Override
     public Object resolve(HttpRequest request, Class<?> parameterType, String parameterName) throws ReflectiveOperationException {
-        return objectBinder.mapToBind(parameterType, parseArguments(request, parameterType));
+        final Map<String, String> arguments = parseArguments(request, parameterType);
+
+        return objectBinder.mapToBind(parameterType, arguments);
     }
 
     private Map<String, String> parseArguments(HttpRequest request, Class<?> parameterType) {

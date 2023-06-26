@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import was.http.HttpRequest;
 import was.http.HttpResponse;
 import was.http.enums.HttpMethod;
+import was.spring.servlet.common.exception.ControllerHandleMethodNotFoundException;
+import was.spring.servlet.common.exception.ControllerNotFoundException;
 import was.spring.servlet.mvc.controller.Controller;
 import was.spring.servlet.mvc.controller.annotation.RequestMapping;
 import was.spring.servlet.mvc.view.Model;
@@ -33,7 +35,7 @@ public class ControllerAdapter {
         Map<String, Controller> controllers = new HashMap<>();
 
         for (Controller initController : initControllers) {
-            for (String mappingUrl : findAllMappingUrl(initController)) {
+            for (String mappingUrl : findAllMappingUrl(initController.getClass())) {
                 controllers.put(mappingUrl, initController);
             }
         }
@@ -42,22 +44,27 @@ public class ControllerAdapter {
     }
 
     public ModelAndView handle(HttpRequest request, HttpResponse response) {
-        final String mappingUrl = toMappingUrl(request.getUrl());
-        final Controller controller = controllers.get(mappingUrl);
+        Controller controller = findController(request).orElseThrow(ControllerNotFoundException::new);
         ModelAndView mv = null;
 
         try {
-            Method method = findHandleMethod(request, controller).orElseThrow(IllegalArgumentException::new);
+            Method method = findControllerMethod(request, controller).orElseThrow(ControllerHandleMethodNotFoundException::new);
             Object[] args = argumentResolver.resolve(request, method);
+            Object returnValue = method.invoke(controller, args);
+            mv = returnValueHandler.handle(method, returnValue, getModel(args));
+            response.setStatus(mv.getHttpStatus());
 
-            Object result = method.invoke(controller, args);
-
-            mv = returnValueHandler.handle(method, result, getModel(args));
         } catch (Exception ex) {
-            LOGGER.info(ex.getClass().getName());
+            LOGGER.info(ex.getMessage());
         }
 
         return mv;
+    }
+
+    private Optional<Controller> findController(HttpRequest request) {
+        final String mappingUrl = toMappingUrl(request.getUrl());
+
+        return Optional.ofNullable(controllers.get(mappingUrl));
     }
 
     private Model getModel(Object[] args) {
@@ -71,7 +78,7 @@ public class ControllerAdapter {
     }
 
 
-    private Optional<Method> findHandleMethod(HttpRequest request, Controller controller) {
+    private Optional<Method> findControllerMethod(HttpRequest request, Controller controller) {
         return Arrays.stream(controller.getClass().getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .filter(method -> isMatchedRequestMapping(method, request.getUrl(), request.getMethod()))
@@ -84,8 +91,8 @@ public class ControllerAdapter {
         return requestMapping.url().equals(requestUrl) && requestMapping.method() == httpMethod;
     }
 
-    private List<String> findAllMappingUrl(Controller controller) {
-        return Arrays.stream(controller.getClass().getDeclaredMethods())
+    private List<String> findAllMappingUrl(Class<? extends Controller> classType) {
+        return Arrays.stream(classType.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .map(method -> method.getDeclaredAnnotation(RequestMapping.class))
                 .map(requestMapping -> toMappingUrl(requestMapping.url()))

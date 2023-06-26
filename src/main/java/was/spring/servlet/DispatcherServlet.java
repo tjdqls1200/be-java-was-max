@@ -18,8 +18,8 @@ import java.util.List;
 
 public class DispatcherServlet {
     private static final DispatcherServlet DISPATCHER_SERVLET = new DispatcherServlet();
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String REDIRECT_PREFIX = "redirect:";
 
     private final ControllerAdapter controllerAdapter;
 
@@ -37,9 +37,11 @@ public class DispatcherServlet {
     public void doDispatch(HttpRequest request, HttpResponse response) {
         final ModelAndView mv = controllerAdapter.handle(request, response);
 
-        response.setStatus(mv.getHttpStatus());
-
-        if (isRedirection(mv)) {
+        if (mv == null) {
+            throw new IllegalArgumentException();
+        }
+        if (isRedirect(mv)) {
+            response.setStatus(HttpStatus.REDIRECT);
             response.addHeader(HeaderType.LOCATION, mv.getViewName());
             return;
         }
@@ -53,11 +55,7 @@ public class DispatcherServlet {
         view.render(mv.getModel(), request, response);
     }
 
-    private boolean isRedirection(ModelAndView mv) {
-        if (mv.getViewName().startsWith("redirect:")) {
-            mv.setHttpStatus(HttpStatus.REDIRECT);
-        }
-
-        return mv.getHttpStatus() == HttpStatus.REDIRECT;
+    private boolean isRedirect(ModelAndView mv) {
+        return mv.getViewName().startsWith(REDIRECT_PREFIX) || mv.getHttpStatus() == HttpStatus.REDIRECT;
     }
 }

@@ -65,22 +65,4 @@
 [x] ~~예외 처리~~, 응답 Response 처리  
 [ ] 쿠키, 세션  
 [x] 회원 로그인 기능 -> 인증까지만 처리  
-[x] ModelAndView, ViewResolver  
-
-<br>
-
-### 4주차
-
-<br>
-
-**구현 목록**
-
----
-
-[ ] 쿠키, 세션    
-[ ] 로그인 유지   
-[ ] ~~동적 HTML~~  
-[ ] 예외 처리  
-[ ] 테스트 코드  
-[ ] 리펙토링 마무리  
-<br>
+[x] ModelAndView, ViewResolver
